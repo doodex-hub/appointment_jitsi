@@ -118,6 +118,19 @@ dari controller modul ini. Lihat `FINDINGS.md` F-06.
 
 ---
 
+## AC-09 — Override mail template tidak pernah aktif (BR-09, F-13, PALING KRITIS)
+
+**AC-09-01** — ref `BR-09` `[DIKONFIRMASI]`
+Given `is_jitsi_param` aktif, `jitsi_link` event terisi penuh, event punya minimal satu attendee
+When `appointment.appointment_booked_mail_template` di-render (`_render_field('body_html', ...)`) untuk event itu
+Then body HTML hasil render TIDAK mengandung `jitsi_link` sama sekali — identik dengan template
+ASLI Odoo core (`appointment/data/mail_template_data.xml`), hanya berisi link "Join" standar
+(`/calendar/meeting/join?token={access_token}`). **DIKONFIRMASI via test nyata** —
+`data/mail_template_data.xml` tidak pernah ter-load karena tidak terdaftar di `__manifest__.py`.
+Lihat `FINDINGS.md` F-13 (prioritas TERTINGGI di seluruh backfill ini).
+
+---
+
 ## AC-08 — Tombol manual generate/clear link tidak terhubung ke UI
 
 **AC-08-01** — ref (Scope §"Yang Termasuk", `generate_jitsi_link`/`clear_jitsi_link`) `[PERLU-KEPUTUSAN]`

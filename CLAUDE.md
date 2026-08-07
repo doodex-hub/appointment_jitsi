@@ -141,18 +141,22 @@ Tidak ada step 06 (Deploy Staging), 08 (UAT), 09 (Deploy Production) — di luar
 
 ## Status saat ini
 
-Step 01 — Sedang dikerjakan (bootstrap selesai, mulai baca kode).
+**Backfill Step 01→07 SELESAI (2026-08-07, mode kontinu CLI).** 13/13 test `TransactionCase`
+PASS (Odoo 17 Enterprise + Postgres 15 via Docker, Mode C). Temuan paling kritis: **F-13** —
+`data/mail_template_data.xml` tidak terdaftar di `__manifest__.py`, fitur email inti modul TIDAK
+PERNAH AKTIF. 13 finding total tercatat di `doc-dev/backfill/FINDINGS.md`, butuh keputusan
+pemilik modul (terutama F-13). Branch kerja: `backfill/17.0` (dari `origin/17.0`), belum di-push.
 
-> AI: update bagian ini sendiri di akhir tiap sesi kerja.
+> AI: update bagian ini sendiri di akhir tiap sesi kerja lanjutan.
 
 ### Status per Step
 
 | Step | Dokumen | Status | Gate |
 |---|---|---|---|
-| 01 | `01A_FUNCTIONAL_SPEC.md`, `01B_ACCEPTANCE_CRITERIA.md` | 🔄 Sedang dikerjakan | — |
-| 03B | `03B_TEST_PLAN.md` | ⬜ Belum mulai | — |
-| 04 | `04A_DEV_TESTING.md`, `04B_API_TEST.md` (kondisional), `tests/*.py` | ⬜ Belum mulai | ⏳ |
-| 07 | `07_QA_TESTING.md`, `07B_QA_AI_BROWSER.md` (kondisional) | ⬜ Belum mulai | ⏳ |
+| 01 | `01A_FUNCTIONAL_SPEC.md`, `01B_ACCEPTANCE_CRITERIA.md` | ✅ Selesai ditulis | — |
+| 03B | `03B_TEST_PLAN.md` | ✅ Selesai ditulis | — |
+| 04 | `04A_DEV_TESTING.md`, `tests/*.py` (13 test, semua real, PASS) | ✅ Selesai | ✔️ Lulus gate |
+| 07 | `07_QA_TESTING.md` (5 skenario end-to-end, semua real, PASS) | ✅ Selesai | ✔️ Lulus gate |
 
 Legenda: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Selesai ditulis · ✔️ Lulus gate.
 

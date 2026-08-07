@@ -36,6 +36,13 @@ penuh. Dicatat sebagai limitasi/prasyarat environment permanen — lihat `FINDIN
 #2 karena bug di ASSERTION test itu sendiri (mengasumsikan `videocall_location` selalu string,
 padahal bisa `False`) — diperbaiki (bukan mengubah kode bisnis), dijalankan ulang, PASS.
 
+**Update Step 07 — test ke-13 ditambahkan:** `test_qa_s01_mail_template_does_not_render_jitsi_link`
+(lihat `test/07_QA_TESTING.md` S-01) menemukan **F-13** (fitur email inti modul tidak pernah
+aktif — `data/mail_template_data.xml` tidak terdaftar di manifest). Hasil final:
+```
+0 failed, 0 error(s) of 13 tests when loading database 'appointment_jitsi_test'
+```
+
 **Warning resmi Odoo yang tercatat saat instalasi (bukan dari test, dari proses `-i` itu sendiri):**
 1. `odoo.api.create`: *"The model odoo.addons.appointment_jitsi.models.calendar_event is not
    overriding the create method in batch"* → lihat F-03.

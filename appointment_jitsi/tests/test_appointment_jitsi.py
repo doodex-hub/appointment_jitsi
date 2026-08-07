@@ -259,3 +259,30 @@ class TestAppointmentJitsi(TransactionCase):
         self.assertFalse(event.jitsi_link)
         event.generate_jitsi_link()
         self.assertTrue(event.jitsi_link, "generate_jitsi_link() harus mengisi ulang jitsi_link")
+
+    def test_qa_s01_mail_template_does_not_render_jitsi_link(self):
+        """S-01 (Step 07 / F-13): appointment_booked_mail_template TIDAK PERNAH menampilkan
+        jitsi_link -- root cause: data/mail_template_data.xml TIDAK terdaftar di __manifest__.py
+        'data', jadi override template ini TIDAK PERNAH di-load Odoo sama sekali. Assertion di
+        bawah mendokumentasikan perilaku SEKARANG (bug) secara eksplisit -- kalau F-13 diperbaiki
+        (file ditambahkan ke manifest), test ini WAJIB direvisi mengikuti behavior baru."""
+        company = self.env.company
+        self._enable_jitsi(company)
+        partner = self.env['res.partner'].create({'name': 'Test QA Partner'})
+        event = self.CalendarEvent.create({
+            'name': 'Test QA Mail Render',
+            'start': '2026-08-10 10:00:00',
+            'stop': '2026-08-10 11:00:00',
+            'partner_ids': [(4, partner.id)],
+        })
+        template = self.env.ref('appointment.appointment_booked_mail_template')
+        rendered = template._render_field('body_html', event.ids)
+        body = rendered[event.id]
+        _logger.info("BACKFILL S-01/F-13: jitsi_link=%r muncul_di_body=%s",
+                     event.jitsi_link, event.jitsi_link in body)
+        self.assertNotIn(event.jitsi_link, body,
+                          "F-13 TERKONFIRMASI RESOLVED?! data/mail_template_data.xml sudah "
+                          "ter-load -- update FINDINGS.md F-13 jadi RESOLVED kalau ini terjadi")
+        self.assertIn('/calendar/meeting/join?token=', body,
+                      "Body seharusnya cuma memuat link 'Join' standar Odoo core (access_token), "
+                      "bukan jitsi_link -- membuktikan template YANG DIPAKAI adalah versi core asli")

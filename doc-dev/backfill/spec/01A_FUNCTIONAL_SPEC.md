@@ -11,22 +11,23 @@
 
 ## Ringkasan untuk Review — Perlu Konfirmasi User
 
-> **Update pasca Step 04 (2026-08-07):** semua poin di bawah SUDAH diverifikasi via eksekusi test
-> nyata (Odoo 17 Enterprise + Postgres via Docker) — lihat `test/04A_DEV_TESTING.md` dan
-> `FINDINGS.md` untuk hasil detail. Satu hipotesis awal (poin 1 lama, "is_jitsi_param truthy
-> string") TERBANTAHKAN oleh eksekusi nyata — dihapus dari daftar ini, lihat `FINDINGS.md` F-01.
-> Satu hipotesis (poin 4 lama) terbukti LEBIH SERIUS dari perkiraan awal dengan mekanisme presisi
-> yang baru ketahuan lewat test A/B — lihat F-04. Dua temuan BARU (F-10, F-11) muncul dari
-> eksekusi nyata, bukan dari baca kode Step 01.
+> **Update pasca Step 04/07 (2026-08-07):** semua poin di bawah SUDAH diverifikasi via eksekusi
+> test nyata (Odoo 17 Enterprise + Postgres via Docker) — lihat `test/04A_DEV_TESTING.md`,
+> `test/07_QA_TESTING.md`, dan `FINDINGS.md` untuk hasil detail. Satu hipotesis awal ("is_jitsi_param
+> truthy string") TERBANTAHKAN oleh eksekusi nyata — lihat F-01. Satu hipotesis terbukti LEBIH
+> SERIUS dari perkiraan awal dengan mekanisme presisi yang baru ketahuan lewat test A/B — lihat
+> F-04. Step 07 menemukan **F-13: fitur email inti modul TIDAK PERNAH AKTIF** — poin paling
+> kritis di seluruh backfill ini, ditaruh di urutan pertama.
 
-1. **Field per-event `is_jitsi` TIDAK dipakai sama sekali di `_compute_jitsi_link`** — hanya `ir.config_parameter('is_jitsi_param')` GLOBAL yang menentukan Jitsi/Discuss untuk SEMUA event, terlepas nilai `is_jitsi` event itu sendiri. Dikonfirmasi nyata: event dibuat tanpa `is_jitsi=True` tetap dapat `jitsi_link` penuh saat setting global aktif. Lihat F-11.
-2. **`jitsi_link`/`videocall_location` hasilnya BERGANTUNG urutan field mana yang dibaca lebih dulu** — kalau kode manapun (view/RPC/automation) membaca `videocall_location` SEBELUM `jitsi_link` pernah diakses untuk record itu, compute Jitsi TIDAK PERNAH JALAN sama sekali (bukan cuma "tertimpa balik" seperti hipotesis awal) — dibuktikan test A/B dengan setup identik menghasilkan `videocall_location` yang beda total. Lihat F-04.
-3. **Toggle `is_jitsi` pada event existing via `write()` TIDAK memicu recompute `jitsi_link`/`videocall_location`** — dikonfirmasi via test nyata (`bug_confirmed=True`). Lihat F-02.
-4. **`create()` di-override dengan signature single-record (`@api.model`, bukan `@api.model_create_multi`)** — Odoo sendiri mencetak WARNING resmi saat install ("not overriding the create method in batch"). Dampak nyata lebih ringan dari perkiraan awal (access_token tetap terisi lewat default core), tapi efek reset `access_token=False` untuk `is_jitsi=False` eksplisit tidak konsisten single vs batch. Lihat F-03.
-5. **`company_param` (Company dipakai di URL Jitsi) adalah SATU nilai global, bukan per-company** — dikonfirmasi via test multi-company nyata. Lihat F-05.
-6. **Modul ini butuh addon Enterprise (`appointment` + `web_gantt`, `license: OEEL-1`)** — tidak bisa di-test dengan image `odoo:17.0` Community publik, WAJIB akses source Odoo Enterprise 17. Lihat F-12.
-7. **URL Jitsi dibentuk dari `company_name` mentah (tanpa slug/escape) dan menduplikasi nama company di path** — dikonfirmasi via test nyata. Lihat F-07.
-8. **`controllers/appointment.py` seluruhnya di-comment-out** — dikonfirmasi via test nyata (tidak ada baris aktif). Lihat F-06.
+1. **🔴 PALING KRITIS — `data/mail_template_data.xml` TIDAK terdaftar di `__manifest__.py` `data`.** Fitur utama modul yang diklaim di manifest/README ("email confirmation menampilkan link Jitsi") TIDAK PERNAH BEKERJA di kode SEKARANG — dikonfirmasi test nyata: body email hasil render SAMA PERSIS dengan template asli Odoo core, tanpa jejak `jitsi_link` sama sekali. Lihat F-13.
+2. **Field per-event `is_jitsi` TIDAK dipakai sama sekali di `_compute_jitsi_link`** — hanya `ir.config_parameter('is_jitsi_param')` GLOBAL yang menentukan Jitsi/Discuss untuk SEMUA event, terlepas nilai `is_jitsi` event itu sendiri. Dikonfirmasi nyata: event dibuat tanpa `is_jitsi=True` tetap dapat `jitsi_link` penuh saat setting global aktif. Lihat F-11.
+3. **`jitsi_link`/`videocall_location` hasilnya BERGANTUNG urutan field mana yang dibaca lebih dulu** — kalau kode manapun (view/RPC/automation) membaca `videocall_location` SEBELUM `jitsi_link` pernah diakses untuk record itu, compute Jitsi TIDAK PERNAH JALAN sama sekali (bukan cuma "tertimpa balik" seperti hipotesis awal) — dibuktikan test A/B dengan setup identik menghasilkan `videocall_location` yang beda total. Lihat F-04.
+4. **Toggle `is_jitsi` pada event existing via `write()` TIDAK memicu recompute `jitsi_link`/`videocall_location`** — dikonfirmasi via test nyata (`bug_confirmed=True`). Lihat F-02.
+5. **`create()` di-override dengan signature single-record (`@api.model`, bukan `@api.model_create_multi`)** — Odoo sendiri mencetak WARNING resmi saat install ("not overriding the create method in batch"). Dampak nyata lebih ringan dari perkiraan awal (access_token tetap terisi lewat default core), tapi efek reset `access_token=False` untuk `is_jitsi=False` eksplisit tidak konsisten single vs batch. Lihat F-03.
+6. **`company_param` (Company dipakai di URL Jitsi) adalah SATU nilai global, bukan per-company** — dikonfirmasi via test multi-company nyata. Lihat F-05.
+7. **Modul ini butuh addon Enterprise (`appointment` + `web_gantt`, `license: OEEL-1`)** — tidak bisa di-test dengan image `odoo:17.0` Community publik, WAJIB akses source Odoo Enterprise 17. Lihat F-12.
+8. **URL Jitsi dibentuk dari `company_name` mentah (tanpa slug/escape) dan menduplikasi nama company di path** — dikonfirmasi via test nyata. Lihat F-07.
+9. **`controllers/appointment.py` seluruhnya di-comment-out** — dikonfirmasi via test nyata (tidak ada baris aktif). Lihat F-06.
 
 ---
 
@@ -171,6 +172,17 @@ tidak perlu (room Jitsi hanya ditentukan oleh path setelah domain; Jitsi tidak p
 sub-folder), dan `company_name` tidak di-escape/slug — spasi/karakter khusus pada nama company
 akan masuk mentah ke URL. `[PERLU-KEPUTUSAN]`
 **Lokasi kode:** `models/calendar_event.py:49-56`
+
+### BR-09 — Override mail template TIDAK PERNAH DI-LOAD Odoo (`[PERLU-KEPUTUSAN]`, TERKONFIRMASI)
+`data/mail_template_data.xml` tidak ada di `__manifest__.py` `data`. Odoo hanya memuat file yang
+eksplisit terdaftar di manifest — file ini TIDAK PERNAH dibaca/dijalankan pada install/upgrade
+manapun, TANPA warning/error (silent gap). Efeknya: override
+`calendar.calendar_template_meeting_update` dan `appointment.appointment_booked_mail_template`
+tidak pernah berlaku — email yang benar-benar terkirim memakai template ASLI Odoo core, tidak
+menyebut Jitsi sama sekali. **Dikonfirmasi via eksekusi nyata (Step 07)**: body render template
+identik dengan versi core, dan baris log "loading appointment_jitsi/data/mail_template_data.xml"
+tidak pernah muncul di log instalasi manapun. `[PERLU-KEPUTUSAN]`
+**Lokasi kode:** `__manifest__.py:27-29`
 
 ### BR-08 — `is_jitsi_param` dibaca sebagai truthy string, bukan boolean
 `get_param('is_jitsi_param')` mengembalikan `False` (Python bool) HANYA kalau key benar-benar

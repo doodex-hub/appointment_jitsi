@@ -35,6 +35,7 @@
 | F-10 | **Baru** — Label field "Company" bentrok antara `company_param` (modul ini) dan `company_id` (`base_setup`) di `res.config.settings` | `[HASIL-BACA]` | Rendah | Ditemukan dari WARNING Odoo sendiri saat instalasi |
 | F-11 | **Baru** — Field per-event `is_jitsi` TIDAK dipakai sama sekali di `_compute_jitsi_link` — hanya `is_jitsi_param` GLOBAL yang menentukan Jitsi/Discuss untuk SEMUA event | `[PERLU-KEPUTUSAN]` | **Tinggi** | Ditemukan saat AC-01-01 (event dibuat TANPA `is_jitsi=True` tetap dapat link Jitsi) |
 | F-12 | Modul butuh addon Enterprise (`appointment` + `web_gantt`, `license: OEEL-1`) — tidak bisa di-test dengan image `odoo:17.0` Community publik | `[HASIL-BACA]` | — | Limitasi environment, lihat "Limitasi Tool" |
+| F-13 | **PALING KRITIS** — `data/mail_template_data.xml` TIDAK terdaftar di `__manifest__.py` `data` — fitur UTAMA modul ("email confirmation menampilkan link Jitsi") TIDAK PERNAH AKTIF SAMA SEKALI | `[PERLU-KEPUTUSAN]` | **TERTINGGI** | ✅ CONFIRMED via test nyata (Step 07) |
 
 ---
 
@@ -301,6 +302,50 @@ mount serupa), TIDAK BISA hanya pakai image `odoo:17.0` Community publik.
 sudah menyebutnya, tapi `__manifest__.py` tidak ada catatan apapun soal ini) — pertimbangkan
 tambahkan catatan di `docker-env/README` (kalau ada) soal mount Enterprise addons untuk dev lain.
 **Keputusan pemilik modul:** *(kosong — diisi manusia, sifatnya informasional)*
+
+---
+
+### F-13 — `data/mail_template_data.xml` tidak terdaftar di `__manifest__.py` — override email TIDAK PERNAH AKTIF
+**Tag:** `[PERLU-KEPUTUSAN]`
+**Prioritas:** **TERTINGGI** — ini membatalkan fitur utama modul yang diklaim di manifest/README.
+**Lokasi:** `__manifest__.py:27-29` (key `"data"`)
+**Ref:** US-03, Scope §"Yang Termasuk" (Email Notification)
+**Deskripsi:** `__manifest__.py` hanya mendaftarkan:
+```python
+"data": [
+    "views/calendar_views.xml",
+],
+```
+File `data/mail_template_data.xml` — yang berisi SATU-SATUNYA logic modul ini untuk menyisipkan
+`jitsi_link` ke email konfirmasi appointment/undangan meeting (override
+`calendar.calendar_template_meeting_update` dan `appointment.appointment_booked_mail_template`) —
+TIDAK ADA di daftar itu sama sekali. Odoo hanya me-load file yang eksplisit terdaftar di
+`data`/`demo`/`assets` manifest; file yang ada di folder tapi tidak terdaftar TIDAK PERNAH dibaca,
+TANPA warning atau error apapun (silent).
+**Hasil verifikasi nyata (Step 07, test `test_qa_s01_mail_template_does_not_render_jitsi_link`):**
+me-render `appointment.appointment_booked_mail_template` untuk event dengan `jitsi_link` terisi
+penuh — body HTML hasil render SAMA PERSIS dengan template ASLI `appointment` core (dikonfirmasi
+baris demi baris terhadap `enterprise17/appointment/data/mail_template_data.xml`), TIDAK
+mengandung `jitsi_link` sama sekali, hanya link "Join" standar Odoo (`/calendar/meeting/join?token=`,
+pakai `access_token`, BUKAN Jitsi). Dikonfirmasi juga di log instalasi: baris
+`"loading appointment_jitsi/data/mail_template_data.xml"` **TIDAK PERNAH MUNCUL** di log Odoo
+manapun sepanjang seluruh sesi Step 04/07 (dibandingkan modul lain yang datanya termuat, semua
+mencetak baris "loading {module}/data/...").
+**Dampak:** **Fitur inti modul yang diklaim di manifest summary/description DAN README** ("Email
+Notification: Customizes the appointment confirmation email template to include the Jitsi meeting
+link") **TIDAK PERNAH BEKERJA** di deployment manapun yang memakai kode SEKARANG — peserta
+appointment/meeting TIDAK PERNAH menerima link Jitsi lewat email, walau integrasi Jitsi aktif dan
+`jitsi_link` event terisi benar di database. Users harus membuka record `calendar.event` secara
+manual di backend untuk mendapat link Jitsi (via `action_join_video_call()`), fitur "otomatis
+lewat email" sepenuhnya tidak berfungsi.
+**Rekomendasi:** Tambahkan `"data/mail_template_data.xml"` ke list `"data"` di `__manifest__.py`,
+lalu `-u appointment_jitsi` (upgrade modul) di semua deployment yang sudah terinstall — TAPI
+perlu diperhatikan: karena pola override memakai `noupdate` flip (lihat file XML), upgrade modul
+yang SUDAH TERLANJUR terinstall tanpa file ini mungkin perlu langkah tambahan (drop record
+`ir.model.data` lama / uninstall-reinstall) supaya override benar-benar ter-apply — perlu
+pengujian tambahan terpisah dari BACKFILL (di luar scope: BACKFILL tidak mengubah kode bisnis).
+**Keputusan pemilik modul:** *(kosong — diisi manusia — ini WAJIB diputuskan mengingat dampaknya
+ke fitur inti modul)*
 
 ---
 
