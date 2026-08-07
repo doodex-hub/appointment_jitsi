@@ -11,16 +11,22 @@
 
 ## Ringkasan untuk Review — Perlu Konfirmasi User
 
-> Maks. 5-8 poin — cuma yang genuinely ambigu/berisiko/butuh keputusan pemilik modul. Semua poin
-> ini juga ada di `FINDINGS.md`.
+> **Update pasca Step 04 (2026-08-07):** semua poin di bawah SUDAH diverifikasi via eksekusi test
+> nyata (Odoo 17 Enterprise + Postgres via Docker) — lihat `test/04A_DEV_TESTING.md` dan
+> `FINDINGS.md` untuk hasil detail. Satu hipotesis awal (poin 1 lama, "is_jitsi_param truthy
+> string") TERBANTAHKAN oleh eksekusi nyata — dihapus dari daftar ini, lihat `FINDINGS.md` F-01.
+> Satu hipotesis (poin 4 lama) terbukti LEBIH SERIUS dari perkiraan awal dengan mekanisme presisi
+> yang baru ketahuan lewat test A/B — lihat F-04. Dua temuan BARU (F-10, F-11) muncul dari
+> eksekusi nyata, bukan dari baca kode Step 01.
 
-1. **`is_jitsi_param` dibaca sebagai string mentah dari `ir.config_parameter`, bukan di-cast ke bool** — `if is_jitsi_enabled:` di `_compute_jitsi_link` bisa TRUE bahkan saat setting eksplisit di-uncheck (string `"False"` non-kosong tetap truthy di Python). Lihat F-01.
-2. **Toggle `is_jitsi` pada event existing via `write()` TIDAK memicu recompute `jitsi_link`/`videocall_location`** — `@api.depends('access_token')` tidak menyertakan `is_jitsi`, dan `write()` tidak di-override. Lihat F-02.
-3. **`create()` di-override dengan signature single-record (`@api.model`, bukan `@api.model_create_multi`)** — pada create batch (mis. recurring event), `values` adalah list, sehingga `'is_jitsi' in values` hampir selalu `False` dan `access_token` tidak ikut di-generate untuk skenario batch. Lihat F-03.
-4. **`videocall_location` ditulis langsung dari `_compute_jitsi_link`, padahal field itu punya compute method sendiri di `calendar` core (`_compute_videocall_location`)** — berpotensi tertimpa balik kalau compute core itu ter-trigger ulang oleh field dependency-nya sendiri. Lihat F-04.
-5. **`company_param` (Company dipakai di URL Jitsi) adalah SATU nilai global (`ir.config_parameter`), bukan per-company** — di setup multi-company, semua event dari company manapun memakai nama company yang sama di link Jitsi. Lihat F-05.
-6. **`controllers/appointment.py` seluruhnya di-comment-out** — tidak ada route HTTP aktif dari modul ini; fitur "buka halaman Jitsi custom" yang tersirat dari nama file tidak pernah berjalan. Lihat F-06.
-7. **URL Jitsi dibentuk dari `company_name` mentah (tanpa slug/escape) dan menduplikasi nama company di path** (`{base}/{company}/{company}-{token}`) — berisiko rusak untuk nama company berspasi/karakter khusus. Lihat F-07.
+1. **Field per-event `is_jitsi` TIDAK dipakai sama sekali di `_compute_jitsi_link`** — hanya `ir.config_parameter('is_jitsi_param')` GLOBAL yang menentukan Jitsi/Discuss untuk SEMUA event, terlepas nilai `is_jitsi` event itu sendiri. Dikonfirmasi nyata: event dibuat tanpa `is_jitsi=True` tetap dapat `jitsi_link` penuh saat setting global aktif. Lihat F-11.
+2. **`jitsi_link`/`videocall_location` hasilnya BERGANTUNG urutan field mana yang dibaca lebih dulu** — kalau kode manapun (view/RPC/automation) membaca `videocall_location` SEBELUM `jitsi_link` pernah diakses untuk record itu, compute Jitsi TIDAK PERNAH JALAN sama sekali (bukan cuma "tertimpa balik" seperti hipotesis awal) — dibuktikan test A/B dengan setup identik menghasilkan `videocall_location` yang beda total. Lihat F-04.
+3. **Toggle `is_jitsi` pada event existing via `write()` TIDAK memicu recompute `jitsi_link`/`videocall_location`** — dikonfirmasi via test nyata (`bug_confirmed=True`). Lihat F-02.
+4. **`create()` di-override dengan signature single-record (`@api.model`, bukan `@api.model_create_multi`)** — Odoo sendiri mencetak WARNING resmi saat install ("not overriding the create method in batch"). Dampak nyata lebih ringan dari perkiraan awal (access_token tetap terisi lewat default core), tapi efek reset `access_token=False` untuk `is_jitsi=False` eksplisit tidak konsisten single vs batch. Lihat F-03.
+5. **`company_param` (Company dipakai di URL Jitsi) adalah SATU nilai global, bukan per-company** — dikonfirmasi via test multi-company nyata. Lihat F-05.
+6. **Modul ini butuh addon Enterprise (`appointment` + `web_gantt`, `license: OEEL-1`)** — tidak bisa di-test dengan image `odoo:17.0` Community publik, WAJIB akses source Odoo Enterprise 17. Lihat F-12.
+7. **URL Jitsi dibentuk dari `company_name` mentah (tanpa slug/escape) dan menduplikasi nama company di path** — dikonfirmasi via test nyata. Lihat F-07.
+8. **`controllers/appointment.py` seluruhnya di-comment-out** — dikonfirmasi via test nyata (tidak ada baris aktif). Lihat F-06.
 
 ---
 
