@@ -112,7 +112,9 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 10 — QA Testing: ✔️ LULUS GATE (2026-08-24).** 5/5 skenario Pass (AI-interaktif via Claude in Chrome, server 18.0 hidup) — termasuk reproduksi LIVE quirk `[BSL-010]` (Videocall URL kosong sampai `jitsi_link` diakses) dan konfirmasi format link Jitsi persis sesuai baseline. QA container sudah di-teardown.
 
-**Step 11 — UAT Sign-off: ✅ Checklist siap, MENUNGGU Kuncoro jalankan sendiri.** `11_UAT_CHECKLIST.md` berisi 3 skenario bahasa awam (T-01/T-02/T-03) — kolom Actual/Status/Sign-off SENGAJA dikosongkan AI, harus diisi manusia yang menjalankan sendiri. **Migrasi 17.0→18.0 ini SECARA TEKNIS SUDAH SELESAI** (Step 1-10 semua lulus) — yang tersisa murni sign-off manusia.
+**Step 11 — UAT Sign-off: ✔️ LULUS GATE (2026-08-24).** Kuncoro mengonfirmasi eksplisit di chat ("selesai saya push. UAT anggap selesai") — sign-off dicatat di `11_UAT_CHECKLIST.md`. Branch `migration/18.0_target` sudah di-push ke origin (dikonfirmasi via `git fetch` + `git log origin/migration/18.0_target`).
+
+**🎉 MIGRASI `appointment_jitsi` 17.0 → 18.0 SELESAI PENUH — semua 11 step lulus, tidak ada langkah tersisa di project ini.** Kalau ada kerja lanjutan (mis. memperbaiki F-13 atau finding lain di luar scope bug-for-bug), itu project migrasi/perbaikan TERPISAH, bukan lanjutan dokumen ini.
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -130,7 +132,7 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 0 critical |
 | 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 13/13 pass |
 | 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 5/5 skenario |
-| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ✅ Checklist siap | ⏳ Menunggu Kuncoro jalankan T-01/T-02/T-03 |
+| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ✔️ Lulus gate | ✔️ 2026-08-24, Kuncoro sign-off |
 
 Legenda: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis · ✔️ Disetujui/lulus gate.
 
