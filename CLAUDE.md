@@ -94,7 +94,15 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 ## Status saat ini
 
-**Step 1 — Intake & Scope, sedang dikerjakan (2026-08-24).** Setup folder referensi selesai (lihat §Folder di bawah), branch target-codebase `migration/18.0_target` dan source-codebase `migration/17.0_source` sudah dibuat, `.claude/settings.json` sudah diisi path absolut. `01a_MIGRATION_INTAKE.md` dan `01b_BASELINE_SPEC.md` sedang ditulis (diadaptasi dari `doc-dev/backfill/`). Menunggu review user sebelum gate Step 1 ditutup dan lanjut ke Step 2.
+**Step 1 — Intake & Scope: ✔️ LULUS GATE (2026-08-24, approved dev).** `CLAUDE.md`, `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md` (21 klaim `BSL-001..021`), `FINDINGS.md` (`MF-01..03`), `PROMPT_LOG.md` sudah di-commit (`288ccf6`) di branch `migration/18.0_target`. Keputusan kunci: bug-for-bug migration — F-13 (email Jitsi tidak pernah aktif) dan F-01..F-12 semua dipertahankan apa adanya, tidak ada fix "sekalian". Dependency `appointment` dikonfirmasi Enterprise-only di 17.0 DAN 18.0.
+
+**Step 2 — Diff & Compatibility Analysis: ✅ selesai (2026-08-24).** Semua simbol native yang dipakai modul (`calendar.event` fields/methods, view inherit `res_config_settings_view_form`, 2 mail template XML-ID, dependency `appointment`) dicek langsung ke `native-source`/`native-target` + `native-*-enterprise` — **byte-identical/tidak ada perubahan breaking** di 17.0→18.0 untuk modul kecil ini. Satu koreksi ke knowledge base umum dicatat sebagai kandidat di `migration-tool/migration-records/appointment_jitsi_17.0_18.0/SUMMARY.md` (soal `create()`/`@api.model_create_multi` — bukan hard requirement). Kesimpulan risiko: RENDAH.
+
+**Step 3 — Migration Spec: ✅ selesai.** Strategi: port langsung 1:1, hanya bump versi manifest — tidak ada rewrite logic (dikonfirmasi Step 2: nol breaking change berdampak).
+
+**Step 4 — Spec Completeness Review: ✔️ LULUS GATE (2026-08-24).** Semua 20 file source module + 21 klaim `BSL-NNN` + 3 finding `MF-NNN` ter-cover di migration spec, tidak ada gap.
+
+**Step 5 — Acceptance Criteria & Test Plan: 🔄 mulai sekarang.**
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -102,10 +110,10 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 | # | Step | Dokumen | Status | Gate |
 |---|---|---|---|---|
-| 1 | Intake & Scope | `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md` | 🔄 Sedang dikerjakan | ⏳ Menunggu review user |
-| 2 | Diff & Compatibility Analysis | `02_DIFF_ANALYSIS.md` | ⬜ Belum mulai | Tidak ada gate formal |
-| 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ⬜ Belum mulai | — |
-| 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ⬜ Belum mulai | — |
+| 1 | Intake & Scope | `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md` | ✔️ Lulus gate | ✔️ Disetujui 2026-08-24 |
+| 2 | Diff & Compatibility Analysis | `02_DIFF_ANALYSIS.md` | ✅ Selesai | Tidak ada gate formal |
+| 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ✅ Selesai | — |
+| 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-24, tidak ada gap |
 | 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ⬜ Belum mulai | — |
 | 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ⬜ Belum mulai | — |
 | 7 | Data Migration Scripts | — | — (N/A, port kode saja) | — |
