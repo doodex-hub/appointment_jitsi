@@ -1,3 +1,8 @@
 docker-env/logs/
 __pycache__/
 *.pyc
+
+# --- ditambahkan otomatis dari migration-tool/templates/cli-config/gitignore.template ---
+*.pyo
+.claude/migration-tool-command-log.jsonl
+.claude/settings.local.json
