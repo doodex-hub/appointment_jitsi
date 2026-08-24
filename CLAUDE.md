@@ -102,7 +102,9 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 4 — Spec Completeness Review: ✔️ LULUS GATE (2026-08-24).** Semua 20 file source module + 21 klaim `BSL-NNN` + 3 finding `MF-NNN` ter-cover di migration spec, tidak ada gap.
 
-**Step 5 — Acceptance Criteria & Test Plan: 🔄 mulai sekarang.**
+**Step 5 — Acceptance Criteria & Test Plan: ✅ selesai.** 14 AC (`AC-01`..`AC-14`) diturunkan dari 21 `BSL-NNN`, dipetakan ke test existing (13 method backfill) + 1 test baru (`AC-04-01`).
+
+**Step 6 — Code Migration: 🔄 hampir selesai.** Applicability Check: cuma C1 (View Sederhana) relevan, sisanya (B2/C2/D1/D2/E/F) N/A. Perubahan aktual: bump manifest `18.0.1.0.0` + update baris compatibility README (2 file) — NOL perubahan logic (sesuai keputusan bug-for-bug). `docker-env/docker-compose.18.0.yml` dibuat (image `odoo:18.0` + mount `enterprise18`). **Checkpoint G1 (install test) sedang berjalan di background (Mode C, AI jalankan langsung)** — hasil belum masuk saat commit ini dibuat, lihat `06c_IMPLEMENTATION_LOG.md` untuk update terbaru begitu selesai.
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -114,6 +116,8 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | 2 | Diff & Compatibility Analysis | `02_DIFF_ANALYSIS.md` | ✅ Selesai | Tidak ada gate formal |
 | 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ✅ Selesai | — |
 | 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-24, tidak ada gap |
+| 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ✅ Selesai | — |
+| 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | 🔄 G1 sedang berjalan | — |
 | 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ⬜ Belum mulai | — |
 | 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ⬜ Belum mulai | — |
 | 7 | Data Migration Scripts | — | — (N/A, port kode saja) | — |

@@ -1,0 +1,40 @@
+name: appointment_jitsi_migration_18_0
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data-18:/var/lib/postgresql/data
+
+  odoo:
+    image: odoo:18.0
+    depends_on:
+      - db
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+    ports:
+      - "8093:8069"
+    volumes:
+      - ../appointment_jitsi:/mnt/extra-addons/appointment_jitsi
+      # appointment_jitsi depends on 'appointment' (Enterprise, OEEL-1) -- not bundled in the
+      # public odoo:18.0 (Community) image. 'appointment' itself depends on 'web_gantt'
+      # (also Enterprise). Mounted read-only from local licensed Enterprise checkout.
+      - D:/Kuncoro/doodex/repo/enterprise18:/mnt/enterprise-addons:ro
+      - ./logs:/var/log/odoo
+    command: >
+      odoo -d appointment_jitsi_test_18
+      -i appointment_jitsi
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/enterprise-addons,/mnt/extra-addons
+      --test-enable
+      --test-tags=/appointment_jitsi
+      --stop-after-init
+      --logfile=/var/log/odoo/odoo_18.log
+
+volumes:
+  db-data-18:
