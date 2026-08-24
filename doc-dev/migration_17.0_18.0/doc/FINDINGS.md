@@ -13,6 +13,7 @@
 | MF-01 | Override mail template tidak pernah aktif (dari `F-13` backfill) | 1 | `[DIWARISI-SOURCE]` | **TERTINGGI** | ✅ Keputusan diambil — dipertahankan apa adanya di 18.0 |
 | MF-02 | 12 bug/quirk lain dari backfill (`F-01`..`F-12`, kecuali `F-13`) | 1 | `[DIWARISI-SOURCE]` | Bervariasi (lihat `doc-dev/backfill/FINDINGS.md`) | ✅ Keputusan diambil — semua dipertahankan apa adanya di 18.0 |
 | MF-03 | Dependency `appointment` Enterprise dikonfirmasi ganda (17.0 & 18.0) | 1 | `[GAP-MIGRASI]` (informasional, bukan blocking) | Sedang | Dikonfirmasi — perlu `enterprise18` untuk dev testing Step 9 |
+| MF-04 | `action_join_video_call()` bertabrakan nama dengan method core `calendar.event`, tidak tercatat di backfill | 8 | `[DIWARISI-SOURCE]` | Rendah | ✅ Diverifikasi benign, pre-existing sejak 17.0 |
 
 ---
 
@@ -49,6 +50,18 @@
 **Dampak:** Step 2 (diff analysis) dan Step 9 (dev testing) WAJIB pakai `native-*-enterprise`, bukan Community saja — sudah diantisipasi dan dicatat di `CLAUDE.md` §Folder dan `01a_MIGRATION_INTAKE.md` §2 sejak awal (menghindari lesson `purchase_product_optional` yang telat sadar soal ini).
 **Rekomendasi:** Tidak perlu tindakan tambahan — sudah tercatat, tinggal dipakai konsisten di step-step berikutnya.
 **Keputusan pemilik modul:** ✅ CONFIRMED, informasional — tidak butuh keputusan lebih lanjut.
+
+---
+
+### MF-04 — `action_join_video_call()` bertabrakan nama dengan method core `calendar.event`
+**Ditemukan di:** Step 8 (2026-08-24) — cek kolisi method wajib (`08_CODE_REVIEW.md` §D Arah 1)
+**Tag:** `[DIWARISI-SOURCE]`
+**Ref:** `08_review/08_CODE_REVIEW.md` §D
+**Lokasi:** `models/calendar_event.py:61-69` (modul) vs `odoo18/addons/calendar/models/calendar_event.py:1035` (core, juga ada identik di `odoo17` baris 985)
+**Deskripsi:** Modul mendefinisikan `action_join_video_call()` pada `calendar.event` — nama PERSIS SAMA dengan method core yang sudah ada di `calendar.event` SEJAK 17.0 (bukan baru muncul di 18.0). Modul TIDAK memanggil `super()`, jadi override-nya total lewat MRO. Tidak pernah tercatat sebagai finding terpisah di backfill (`doc-dev/backfill/FINDINGS.md` F-01..F-13).
+**Dampak:** Diverifikasi via baca isi core (byte-identical 17.0/18.0): core hanya `return {'type': 'ir.actions.act_url', 'url': self.videocall_location, 'target': 'new'}` — tidak ada side-effect lain yang hilang akibat override total ini. **Tidak ada dampak fungsional**, dan karena core identik di kedua versi, tidak ada risiko baru dari migrasi.
+**Rekomendasi:** Tidak ada tindakan — dicatat murni untuk melengkapi audit trail collision-check yang terlewat di backfill.
+**Keputusan pemilik modul:** ✅ CONFIRMED benign, informasional — tidak butuh keputusan lebih lanjut.
 
 ---
 

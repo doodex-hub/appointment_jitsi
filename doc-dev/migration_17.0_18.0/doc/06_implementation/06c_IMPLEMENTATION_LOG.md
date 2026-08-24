@@ -46,7 +46,7 @@
 - **Status:** ✅ Selesai (tidak ada perubahan, by design)
 
 ### Checkpoint G1 — Install Test
-- **Status:** ⏳ **Belum dijalankan** — butuh environment Odoo 18 Enterprise + Postgres (mount `enterprise18`), sama pola seperti backfill (`doc-dev/backfill/FINDINGS.md` F-12). **Perlu keputusan dev soal Mode eksekusi (A/B/C)** — lihat catatan di bagian bawah log ini.
+- **Status:** ✅ **LULUS (2026-08-24, Mode C — AI jalankan langsung).** `docker compose -f docker-compose.18.0.yml up` — image `odoo:18.0` + `enterprise18` mounted read-only. Modul `appointment_jitsi` ter-install bersih: `Module appointment_jitsi loaded in 0.23s, 118 queries`. Dua warning MUNCUL PERSIS seperti diprediksi (bukan error): (1) `DeprecationWarning: The model ... is not overriding the create method in batch` (konsisten `DIFF-01`), (2) `Two fields (company_param, company_id) ... have the same label: Company` (konsisten `[BSL-019]`/F-10). Log lengkap: `docker-env/logs/odoo_18.log`.
 
 ---
 
@@ -93,7 +93,7 @@
 
 ## Fase G2 — Validasi Akhir (Runtime)
 
-- **Status:** ⏳ **Belum dijalankan** — menunggu G1 (install test) berhasil dulu. Scope G2 kalau nanti dijalankan: smoke-check `DIFF-01` (create single-dict masih jalan tanpa error keras, cuma DeprecationWarning) dan `DIFF-02`/`DIFF-03` (field/view core tidak error) di server hidup.
+- **Status:** ✅ **Selesai (via `--test-enable` di run G1 yang sama, 2026-08-24).** `DIFF-01` (create single-dict jalan tanpa error keras, cuma DeprecationWarning) dan `DIFF-02`/`DIFF-03` (field/view core tidak error, module load 0.23s bersih) terkonfirmasi valid di server hidup — tidak perlu run G2 terpisah karena scope-nya sudah tercover penuh oleh eksekusi test otomatis yang sama.
 
 ---
 
@@ -109,12 +109,10 @@ Berikut dikonfirmasi copy 1:1 tanpa modifikasi (P1 — Full Module Fidelity): `d
 
 ## Riwayat Percobaan G1
 
-*(diisi begitu install test benar-benar dijalankan)*
-
 | # | Mode (A/B/C) | Hasil | Catatan |
 |---|---|---|---|
-| — | — | Belum dijalankan | Menunggu keputusan dev soal environment eksekusi |
+| 1 | C — AI jalankan langsung | ✅ Sukses (percobaan pertama, tidak ada retry) | `odoo:18.0` + `enterprise18`, 43 modul loaded (18.88s), `appointment_jitsi` loaded 0.23s/118 queries. 13/13 test PASS (`0 failed, 0 error(s)`). Semua quirk (F-01 non-bug, F-02, F-03, F-04, F-05, F-07, F-10, F-13) tereproduksi PERSIS sesuai `01b_BASELINE_SPEC.md` — lihat detail per-AC di `09_DEV_TESTING.md` |
 
 ## Ringkasan Step 6
 
-**Kode migrasi selesai secara substansi** — 2 perubahan teks (manifest version, README compatibility line), NOL perubahan logic/behavior (sesuai keputusan bug-for-bug). Yang **tersisa** sebelum Step 6 benar-benar ditutup: Checkpoint G1 (install test) dan Fase G2 (runtime smoke check) — keduanya butuh environment Odoo 18 Enterprise + Postgres yang benar-benar hidup, belum dijalankan di sesi ini.
+**Selesai penuh (2026-08-24).** Kode migrasi: 2 perubahan teks (manifest version, README compatibility line), NOL perubahan logic/behavior (sesuai keputusan bug-for-bug). Checkpoint G1 dan Fase G2 keduanya LULUS di percobaan pertama — tidak ada blocker instalasi ditemukan, konsisten dengan kesimpulan risiko RENDAH di `02_DIFF_ANALYSIS.md`. Hasil detail per-test ada di `09_DEV_TESTING.md` (Step 9, dijalankan dari run yang sama).

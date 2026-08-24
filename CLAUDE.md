@@ -104,7 +104,13 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 5 — Acceptance Criteria & Test Plan: ✅ selesai.** 14 AC (`AC-01`..`AC-14`) diturunkan dari 21 `BSL-NNN`, dipetakan ke test existing (13 method backfill) + 1 test baru (`AC-04-01`).
 
-**Step 6 — Code Migration: 🔄 hampir selesai.** Applicability Check: cuma C1 (View Sederhana) relevan, sisanya (B2/C2/D1/D2/E/F) N/A. Perubahan aktual: bump manifest `18.0.1.0.0` + update baris compatibility README (2 file) — NOL perubahan logic (sesuai keputusan bug-for-bug). `docker-env/docker-compose.18.0.yml` dibuat (image `odoo:18.0` + mount `enterprise18`). **Checkpoint G1 (install test) sedang berjalan di background (Mode C, AI jalankan langsung)** — hasil belum masuk saat commit ini dibuat, lihat `06c_IMPLEMENTATION_LOG.md` untuk update terbaru begitu selesai.
+**Step 6 — Code Migration: ✔️ selesai, G1+G2 LULUS.** Applicability Check: cuma C1 relevan, sisanya N/A. Perubahan aktual: bump manifest `18.0.1.0.0` + README compatibility (NOL perubahan logic). G1 (install test, Mode C) sukses di percobaan pertama: modul load bersih 0.23s/118 queries, 13/13 test existing PASS terhadap Odoo 18 Enterprise + `enterprise18`.
+
+**Step 8 — Code Review: ✔️ LULUS GATE (2026-08-24).** 0 issue 🔴/🟡, 4 Info (3 bug-for-bug disengaja + 1 kolisi method baru ditemukan: `action_join_video_call()` vs core, diverifikasi BENIGN & pre-existing sejak 17.0, dicatat `FINDINGS.md` MF-04).
+
+**Step 9 — Dev Testing: ✔️ LULUS GATE (2026-08-24).** 13/13 test PASS (`0 failed, 0 error(s)`), semua quirk F-01..F-13 tereproduksi PERSIS di 18.0 termasuk F-13 (email tetap tidak aktif — dikonfirmasi `muncul_di_body=False`). Satu gap non-blocking: `action_join_video_call()` belum ada test eksplisit (risiko rendah).
+
+**Step 10 — QA Testing: 🔄 mulai sekarang** (perlu keputusan dev soal mode eksekusi).
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -117,13 +123,11 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ✅ Selesai | — |
 | 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-24, tidak ada gap |
 | 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ✅ Selesai | — |
-| 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | 🔄 G1 sedang berjalan | — |
-| 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ⬜ Belum mulai | — |
-| 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ⬜ Belum mulai | — |
+| 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ✔️ Selesai, G1+G2 lulus | — |
 | 7 | Data Migration Scripts | — | — (N/A, port kode saja) | — |
-| 8 | Code Review | `08_CODE_REVIEW.md` | ⬜ Belum mulai | — |
-| 9 | Dev Testing | `09_DEV_TESTING.md` | ⬜ Belum mulai | — |
-| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ⬜ Belum mulai | — |
+| 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 0 critical |
+| 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 13/13 pass |
+| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | 🔄 Sedang dikerjakan | — |
 | 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ⬜ Belum mulai | — |
 
 Legenda: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis · ✔️ Disetujui/lulus gate.
