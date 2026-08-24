@@ -110,7 +110,9 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 9 — Dev Testing: ✔️ LULUS GATE (2026-08-24).** 13/13 test PASS (`0 failed, 0 error(s)`), semua quirk F-01..F-13 tereproduksi PERSIS di 18.0 termasuk F-13 (email tetap tidak aktif — dikonfirmasi `muncul_di_body=False`). Satu gap non-blocking: `action_join_video_call()` belum ada test eksplisit (risiko rendah).
 
-**Step 10 — QA Testing: 🔄 mulai sekarang** (perlu keputusan dev soal mode eksekusi).
+**Step 10 — QA Testing: ✔️ LULUS GATE (2026-08-24).** 5/5 skenario Pass (AI-interaktif via Claude in Chrome, server 18.0 hidup) — termasuk reproduksi LIVE quirk `[BSL-010]` (Videocall URL kosong sampai `jitsi_link` diakses) dan konfirmasi format link Jitsi persis sesuai baseline. QA container sudah di-teardown.
+
+**Step 11 — UAT Sign-off: ✅ Checklist siap, MENUNGGU Kuncoro jalankan sendiri.** `11_UAT_CHECKLIST.md` berisi 3 skenario bahasa awam (T-01/T-02/T-03) — kolom Actual/Status/Sign-off SENGAJA dikosongkan AI, harus diisi manusia yang menjalankan sendiri. **Migrasi 17.0→18.0 ini SECARA TEKNIS SUDAH SELESAI** (Step 1-10 semua lulus) — yang tersisa murni sign-off manusia.
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -127,8 +129,8 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | 7 | Data Migration Scripts | — | — (N/A, port kode saja) | — |
 | 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 0 critical |
 | 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 13/13 pass |
-| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | 🔄 Sedang dikerjakan | — |
-| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ⬜ Belum mulai | — |
+| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 5/5 skenario |
+| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ✅ Checklist siap | ⏳ Menunggu Kuncoro jalankan T-01/T-02/T-03 |
 
 Legenda: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis · ✔️ Disetujui/lulus gate.
 

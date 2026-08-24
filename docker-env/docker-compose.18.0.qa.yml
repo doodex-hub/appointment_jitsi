@@ -1,0 +1,33 @@
+name: appointment_jitsi_migration_18_0_qa
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data-18-qa:/var/lib/postgresql/data
+
+  odoo:
+    image: odoo:18.0
+    depends_on:
+      - db
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+    ports:
+      - "8094:8069"
+    volumes:
+      - ../appointment_jitsi:/mnt/extra-addons/appointment_jitsi
+      - D:/Kuncoro/doodex/repo/enterprise18:/mnt/enterprise-addons:ro
+    command: >
+      odoo -d appointment_jitsi_qa_18
+      -i appointment_jitsi
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/enterprise-addons,/mnt/extra-addons
+      --without-demo=all
+
+volumes:
+  db-data-18-qa:
