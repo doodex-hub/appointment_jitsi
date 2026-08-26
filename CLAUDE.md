@@ -106,7 +106,11 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 6 — Code Migration: ✔️ selesai, G1+G2 LULUS (percobaan ke-4, 2026-08-26).** Perubahan aktual: manifest `19.0.1.0.0` + README compatibility ×2 (housekeeping) + 1 fix wajib `views/calendar_views.xml` (`target=inline`→`current`, `MF-02`, install-blocking, dead code, nol dampak observable). 2 infra blocker ditemukan & diperbaiki di jalan (pgvector requirement, `target=inline` dihapus di 19.0 — keduanya dicatat sebagai temuan general baru di `migration-records/`). `MF-01` (mekanisme `create()` berubah) terkonfirmasi berdampak nyata (2/13 test awalnya gagal) — **ESCALATION dijawab dev**: observable-outcome baru diterima, `create()` TIDAK diubah, 2 assertion test diupdate. Hasil akhir: **13/13 test PASS, install bersih di Odoo 19 Enterprise + `enterprise19.0`.**
 
-**Selanjutnya:** Step 8 — Code Review, lalu Step 9 — Dev Testing (mendokumentasikan hasil G1 run yang sudah lulus di atas, pola sama seperti migrasi 17.0→18.0).
+**Step 8 — Code Review: ✔️ LULUS GATE (2026-08-26).** 0 issue 🔴/🟡, 5 Info (3 bug-for-bug disengaja + 1 kolisi method benign pre-existing + 1 fix wajib `target=inline` sudah diverifikasi). Tidak ada perubahan tak tertelusuri.
+
+**Step 9 — Dev Testing: ✔️ LULUS GATE (2026-08-26).** 13/13 test PASS (percobaan ke-4, setelah 2 infra fix + 1 keputusan dev MF-01). Semua quirk F-01..F-13/BSL-NNN tereproduksi persis, termasuk F-13 (email tetap tidak aktif). Dua deviation observable (`MF-01`, format token + reset access_token) disetujui eksplisit dev sebelum gate ditutup.
+
+**Selanjutnya:** Step 10 — QA Testing (AI-interaktif via server live, prioritas smoke check AC-11-01/AC-02/AC-14), lalu Step 11 — UAT Sign-off (butuh konfirmasi eksplisit dev, bukan self-approve).
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -121,8 +125,8 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ✅ Selesai | — |
 | 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ✔️ Selesai, G1+G2 lulus | — |
 | 7 | Data Migration Scripts | — | — (N/A, port kode saja) | — |
-| 8 | Code Review | `08_CODE_REVIEW.md` | ⬜ Belum mulai | — |
-| 9 | Dev Testing | `09_DEV_TESTING.md` | ⬜ Belum mulai | — |
+| 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-26, 0 critical |
+| 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus gate | ✔️ 2026-08-26, 13/13 pass |
 | 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ⬜ Belum mulai | — |
 | 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ⬜ Belum mulai | — |
 
