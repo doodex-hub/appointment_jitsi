@@ -27,9 +27,9 @@
 | 7 — Data Migration Scripts | | | — (n/a, port kode saja) |
 | 8 — Code Review | 1 | 0 | JALAN TERUS dari Step 6, prompt yang sama. Gate lulus tanpa 🔴/🟡. |
 | 9 — Dev Testing | 1 | 0 | JALAN TERUS, prompt yang sama. Menulis ulang hasil G1 percobaan ke-4 sebagai gate formal. |
-| 10 — QA Testing | | | |
+| 10 — QA Testing | 1 | 0 | JALAN TERUS, prompt yang sama. Sandboxed Browser pane gagal (sama pola 17->18), beralih Claude in Chrome. Tour onboarding sempat mengganggu klik (retry, bukan tool-fix). |
 | 11 — UAT Sign-off | | | |
-| **Total** | 11 | 0 | |
+| **Total** | 12 | 0 | |
 
 ## Catatan Definisi
 

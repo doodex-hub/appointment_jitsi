@@ -110,7 +110,9 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 9 — Dev Testing: ✔️ LULUS GATE (2026-08-26).** 13/13 test PASS (percobaan ke-4, setelah 2 infra fix + 1 keputusan dev MF-01). Semua quirk F-01..F-13/BSL-NNN tereproduksi persis, termasuk F-13 (email tetap tidak aktif). Dua deviation observable (`MF-01`, format token + reset access_token) disetujui eksplisit dev sebelum gate ditutup.
 
-**Selanjutnya:** Step 10 — QA Testing (AI-interaktif via server live, prioritas smoke check AC-11-01/AC-02/AC-14), lalu Step 11 — UAT Sign-off (butuh konfirmasi eksplisit dev, bukan self-approve).
+**Step 10 — QA Testing: ✔️ LULUS GATE (2026-08-26).** 5/5 skenario Pass (AI-interaktif via Claude in Chrome, server 19.0 hidup) — termasuk konfirmasi ULANG independen live untuk `MF-01` (format `access_token` 36-char dash di S-03) dan reproduksi live quirk `[BSL-002/006/007/013/020]`. S-04 (`BSL-010`) tidak tereproduksi lewat metode RPC yang dipakai (sensitif pola akses) — dicatat sebagai catatan metodologi, BUKAN gagal, karena Step 9 sudah membuktikan quirk ini valid via akses atribut langsung. QA container sudah di-teardown.
+
+**Selanjutnya:** Step 11 — UAT Sign-off. Ini butuh konfirmasi eksplisit dev (bukan self-approve AI) — akan disiapkan checklist-nya dan diminta sign-off.
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -127,7 +129,7 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | 7 | Data Migration Scripts | — | — (N/A, port kode saja) | — |
 | 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-26, 0 critical |
 | 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus gate | ✔️ 2026-08-26, 13/13 pass |
-| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ⬜ Belum mulai | — |
+| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ✔️ Lulus gate | ✔️ 2026-08-26, 5/5 skenario |
 | 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ⬜ Belum mulai | — |
 
 Legenda: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis · ✔️ Disetujui/lulus gate.
