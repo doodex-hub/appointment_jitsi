@@ -98,7 +98,13 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 2 — Diff & Compatibility Analysis: ✅ Selesai (2026-08-26).** Semua simbol native yang dipakai modul (`calendar.event` fields/methods, view inherit `res_config_settings_view_form`, 2 mail template XML-ID, dependency `appointment`) dicek langsung ke `native-source`/`native-target` + `native-*-enterprise` — mayoritas byte-identical/tidak ada perubahan breaking. **Satu temuan penting (`MF-01`/`DIFF-01`):** mekanisme `@api.model create` berubah — di 19.0 di-route ke `model_create_multi()` (bukan `model_create_single()` seperti 18.0), `values` di `create()` modul ini SEKARANG SELALU list, bukan dict mentah. Dampak ke `[BSL-005]`/`[BSL-009]` belum bisa dipastikan tanpa eksekusi test nyata — **WAJIB diverifikasi ulang di Step 9**, bukan diasumsikan aman. Kesimpulan risiko: **RENDAH-SEDANG** (naik dari RENDAH di migrasi 17.0→18.0).
 
-**Selanjutnya:** Step 3 — Migration Spec (strategi: port 1:1 + bump versi manifest, dengan catatan verifikasi khusus MF-01 di Step 9).
+**Step 3 — Migration Spec: ✅ Selesai.** Strategi: port langsung 1:1, hanya bump versi manifest — tidak ada rewrite logic disengaja. `create()` TETAP di-port apa adanya (tidak diubah ke `@api.model_create_multi`) meski MF-01 — keputusan diambil sendiri (opsi jelas lebih aman: bug-for-bug default, verifikasi empiris menyusul Step 9), tidak eskalasi.
+
+**Step 4 — Spec Completeness Review: ✔️ LULUS GATE (2026-08-26).** Semua 20 file source module + 21 klaim `BSL-NNN` + 1 finding `MF-01` + 10 item `DIFF-NNN` ter-cover di migration spec, tidak ada gap.
+
+**Step 5 — Acceptance Criteria & Test Plan: ✅ Selesai.** 14 AC (`AC-01`..`AC-14`) diturunkan dari 21 `BSL-NNN`, dipetakan ke 13 test existing. AC-02/AC-06 ditandai ⚠️ MF-01 (kriteria "identik" diperlonggar jadi observable-outcome, bukan mekanisme internal — WAJIB dikonfirmasi eksekusi nyata Step 9).
+
+**Selanjutnya:** Step 6 — Code Migration (bump manifest ke `19.0.1.0.0`, update README compatibility, TIDAK ada perubahan logic). Checkpoint G1 (install test) akan butuh keputusan dev: Mode A (dev jalankan sendiri) vs Mode C (AI jalankan langsung via CLI) — ini checkpoint yang memang didesain untuk ditanya, akan ditanyakan saat tiba di titik itu.
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -108,9 +114,9 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 |---|---|---|---|---|
 | 1 | Intake & Scope | `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md` | ✔️ Lulus gate | ✔️ Disetujui 2026-08-26 |
 | 2 | Diff & Compatibility Analysis | `02_DIFF_ANALYSIS.md` | ✅ Selesai | Tidak ada gate formal (1 temuan MF-01 dicatat, tidak blocking) |
-| 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ⬜ Belum mulai | — |
-| 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ⬜ Belum mulai | — |
-| 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ⬜ Belum mulai | — |
+| 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ✅ Selesai | — |
+| 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-26, tidak ada gap |
+| 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ✅ Selesai | — |
 | 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ⬜ Belum mulai | — |
 | 7 | Data Migration Scripts | — | ⬜ Belum mulai / — (n/a kalau port kode saja) | — |
 | 8 | Code Review | `08_CODE_REVIEW.md` | ⬜ Belum mulai | — |
