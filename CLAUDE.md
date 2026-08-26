@@ -112,7 +112,9 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 10 — QA Testing: ✔️ LULUS GATE (2026-08-26).** 5/5 skenario Pass (AI-interaktif via Claude in Chrome, server 19.0 hidup) — termasuk konfirmasi ULANG independen live untuk `MF-01` (format `access_token` 36-char dash di S-03) dan reproduksi live quirk `[BSL-002/006/007/013/020]`. S-04 (`BSL-010`) tidak tereproduksi lewat metode RPC yang dipakai (sensitif pola akses) — dicatat sebagai catatan metodologi, BUKAN gagal, karena Step 9 sudah membuktikan quirk ini valid via akses atribut langsung. QA container sudah di-teardown.
 
-**Selanjutnya:** Step 11 — UAT Sign-off. Ini butuh konfirmasi eksplisit dev (bukan self-approve AI) — akan disiapkan checklist-nya dan diminta sign-off.
+**Step 11 — UAT Sign-off: 🔄 Draft siap, menunggu konfirmasi dev (2026-08-26).** Checklist `11_UAT_CHECKLIST.md` sudah ditulis lengkap merekap hasil Step 9/10, termasuk 2 item deviation yang perlu dikonfirmasi paham & diterima dev (`MF-01` observable-outcome baru, `MF-02` fix wajib). **BELUM ditutup** — menunggu konfirmasi eksplisit Kuncoro di chat sebelum sign-off diisi.
+
+**Selanjutnya:** Menunggu jawaban dev untuk menutup Step 11. Kalau disetujui, migrasi `appointment_jitsi` 18.0→19.0 SELESAI PENUH.
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
