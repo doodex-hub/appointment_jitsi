@@ -1,0 +1,46 @@
+name: appointment_jitsi_migration_19_0
+
+services:
+  db:
+    # Odoo 19.0 core runs `CREATE EXTENSION IF NOT EXISTS vector` during base DB init (new
+    # pgvector-based feature) -- plain postgres:15 lacks the extension and Odoo exits(255).
+    # pgvector/pgvector:pg15 is postgres:15 + pgvector pre-installed, otherwise identical.
+    image: pgvector/pgvector:pg15
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data-19:/var/lib/postgresql/data
+
+  odoo:
+    image: odoo:19.0
+    depends_on:
+      - db
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+    ports:
+      - "8094:8069"
+    volumes:
+      - ../appointment_jitsi:/mnt/extra-addons/appointment_jitsi
+      # appointment_jitsi depends on 'appointment' (Enterprise, OEEL-1) -- not bundled in the
+      # public odoo:19.0 (Community) image. Unlike 18.0 (odoo18+enterprise18 = two separate
+      # clones), the local 19.0 reference (enterprise19.0) is a single merged tree containing
+      # BOTH Community and Enterprise addons under odoo/addons/ (not a git repo, extract-based
+      # distribution) -- see 01a_MIGRATION_INTAKE.md §0. Mounted read-only; duplicate Community
+      # module names vs the base image are harmless (addons-path first-match wins per module).
+      - D:/Kuncoro/doodex/repo/enterprise19.0/odoo/addons:/mnt/enterprise-addons:ro
+      - ./logs:/var/log/odoo
+    command: >
+      odoo -d appointment_jitsi_test_19
+      -i appointment_jitsi
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/enterprise-addons,/mnt/extra-addons
+      --test-enable
+      --test-tags=/appointment_jitsi
+      --stop-after-init
+      --logfile=/var/log/odoo/odoo_19.log
+
+volumes:
+  db-data-19:

@@ -23,13 +23,13 @@
 | 3 — Migration Spec | 1 | 0 | JALAN TERUS dari Step 2, prompt yang sama. Keputusan create() tetap 1:1 diambil sendiri (rekomendasi jelas), tidak eskalasi. |
 | 4 — Spec Completeness Review | 1 | 0 | JALAN TERUS, prompt yang sama. Gate lulus tanpa gap. |
 | 5 — Acceptance Criteria & Test Plan | 1 | 0 | JALAN TERUS, prompt yang sama. AC-02/AC-06 ditandai perlu verifikasi empiris (MF-01). |
-| 6 — Code Migration (semua fase A-G2) | | | |
+| 6 — Code Migration (semua fase A-G2) | 3 | 0 | Checkpoint G1 ditanyakan (Mode A/C, valid stop point). 2 infra blocker ditemukan+fix sendiri (pgvector, target=inline) tanpa tanya (rekomendasi jelas). MF-01 dampak nyata (2/13 test gagal) -> 1 ESCALATION dijawab dev (ada 2 opsi valid, trade-off nyata BSL-009 vs konsistensi create()). |
 | 7 — Data Migration Scripts | | | — (n/a, port kode saja) |
 | 8 — Code Review | | | |
 | 9 — Dev Testing | | | |
 | 10 — QA Testing | | | |
 | 11 — UAT Sign-off | | | |
-| **Total** | 6 | 0 | |
+| **Total** | 9 | 0 | |
 
 ## Catatan Definisi
 

@@ -57,7 +57,7 @@ Ensures that each Jitsi meeting link is unique to the appointment, maintaining t
  Once installed and configured, the module will automatically generate unique Jitsi meeting links for appointments, store them in the custom field, and include them in appointment confirmation emails.
 
 ## Compatibility
-Odoo version: 18.0 Enterprise Edition
+Odoo version: 19.0 Enterprise Edition
 
 ## License
 This module is licensed under [LGPLv3 licensed](./LICENSE)

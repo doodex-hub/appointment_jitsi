@@ -104,7 +104,9 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 5 — Acceptance Criteria & Test Plan: ✅ Selesai.** 14 AC (`AC-01`..`AC-14`) diturunkan dari 21 `BSL-NNN`, dipetakan ke 13 test existing. AC-02/AC-06 ditandai ⚠️ MF-01 (kriteria "identik" diperlonggar jadi observable-outcome, bukan mekanisme internal — WAJIB dikonfirmasi eksekusi nyata Step 9).
 
-**Selanjutnya:** Step 6 — Code Migration (bump manifest ke `19.0.1.0.0`, update README compatibility, TIDAK ada perubahan logic). Checkpoint G1 (install test) akan butuh keputusan dev: Mode A (dev jalankan sendiri) vs Mode C (AI jalankan langsung via CLI) — ini checkpoint yang memang didesain untuk ditanya, akan ditanyakan saat tiba di titik itu.
+**Step 6 — Code Migration: ✔️ selesai, G1+G2 LULUS (percobaan ke-4, 2026-08-26).** Perubahan aktual: manifest `19.0.1.0.0` + README compatibility ×2 (housekeeping) + 1 fix wajib `views/calendar_views.xml` (`target=inline`→`current`, `MF-02`, install-blocking, dead code, nol dampak observable). 2 infra blocker ditemukan & diperbaiki di jalan (pgvector requirement, `target=inline` dihapus di 19.0 — keduanya dicatat sebagai temuan general baru di `migration-records/`). `MF-01` (mekanisme `create()` berubah) terkonfirmasi berdampak nyata (2/13 test awalnya gagal) — **ESCALATION dijawab dev**: observable-outcome baru diterima, `create()` TIDAK diubah, 2 assertion test diupdate. Hasil akhir: **13/13 test PASS, install bersih di Odoo 19 Enterprise + `enterprise19.0`.**
+
+**Selanjutnya:** Step 8 — Code Review, lalu Step 9 — Dev Testing (mendokumentasikan hasil G1 run yang sudah lulus di atas, pola sama seperti migrasi 17.0→18.0).
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -117,8 +119,8 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ✅ Selesai | — |
 | 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-26, tidak ada gap |
 | 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ✅ Selesai | — |
-| 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ⬜ Belum mulai | — |
-| 7 | Data Migration Scripts | — | ⬜ Belum mulai / — (n/a kalau port kode saja) | — |
+| 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ✔️ Selesai, G1+G2 lulus | — |
+| 7 | Data Migration Scripts | — | — (N/A, port kode saja) | — |
 | 8 | Code Review | `08_CODE_REVIEW.md` | ⬜ Belum mulai | — |
 | 9 | Dev Testing | `09_DEV_TESTING.md` | ⬜ Belum mulai | — |
 | 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ⬜ Belum mulai | — |

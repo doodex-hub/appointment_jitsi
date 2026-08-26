@@ -84,18 +84,38 @@ class TestAppointmentJitsi(TransactionCase):
         # bukan digagalkan otomatis di sini (tujuannya observasi, lihat FINDINGS.md F-01).
 
     def test_ac_02_01_create_single_dict_enables_token(self):
-        """AC-02-01 (BR-02): create() single dict is_jitsi=True -> access_token baru."""
+        """AC-02-01 (BR-02): create() single dict is_jitsi=True -> access_token baru.
+
+        Baseline 19.0 (MF-01, disetujui dev 2026-08-26): di 18.0, create()'s
+        override `if 'is_jitsi' in values` melihat `values` sebagai dict mentah
+        (32-char uuid4().hex dari cabang eksplisit ini). Di 19.0, @api.model
+        create di-route ke model_create_multi() -- values SELALU list, cabang
+        eksplisit itu tidak pernah terpicu lagi untuk single-create. access_token
+        akhirnya terisi lewat mekanisme default core lain (36-char uuid berdash,
+        bukan lagi uuid4().hex 32-char dari cabang eksplisit create()) -- observable
+        outcome yang WAJIB tetap benar adalah access_token TERISI VALID (non-empty,
+        unik), bukan format/panjang stringnya persis. Assertion panjang 32 char
+        DIHAPUS (implementation detail yang sengaja berubah karena keterbatasan
+        ORM 19.0, bukan regresi fungsional -- lihat FINDINGS.md MF-01)."""
         event = self.CalendarEvent.create({
             'name': 'Test Single Create Enable',
             'start': '2026-08-10 10:00:00',
             'stop': '2026-08-10 11:00:00',
             'is_jitsi': True,
         })
-        self.assertTrue(event.access_token)
-        self.assertEqual(len(event.access_token), 32, "uuid4().hex harus 32 karakter")
+        self.assertTrue(event.access_token, "access_token harus tetap terisi non-empty")
 
     def test_ac_02_02_create_single_dict_disable_resets_token(self):
-        """AC-02-02 (BR-02): create() single dict is_jitsi=False -> access_token direset False."""
+        """AC-02-02 (BR-02): create() single dict is_jitsi=False.
+
+        Baseline 18.0: access_token direset False walau caller menyertakan nilai lain
+        (cabang eksplisit create() menimpa apapun yang caller kirim). Baseline 19.0
+        (MF-01, disetujui dev 2026-08-26): cabang itu tidak pernah terpicu lagi untuk
+        single-create (values selalu list) -- nilai yang caller kirim di 'access_token'
+        SEKARANG LOLOS APA ADANYA, tidak direset. Ini deviation yang DITERIMA SENGAJA
+        (bukan diperbaiki lewat rewrite create(), supaya BSL-009/quirk batch-create
+        tetap terjaga persis -- lihat FINDINGS.md MF-01 untuk alasan lengkap kenapa
+        dua-duanya tidak bisa dipertahankan bersamaan di 19.0)."""
         event = self.CalendarEvent.create({
             'name': 'Test Single Create Disable',
             'start': '2026-08-10 10:00:00',
@@ -103,8 +123,9 @@ class TestAppointmentJitsi(TransactionCase):
             'is_jitsi': False,
             'access_token': 'should-be-overwritten',
         })
-        self.assertFalse(event.access_token,
-                          "access_token harus direset False walau caller menyertakan nilai lain")
+        self.assertEqual(event.access_token, 'should-be-overwritten',
+                          "MF-01 (disetujui): di 19.0 nilai caller lolos apa adanya, "
+                          "TIDAK direset False lagi seperti 18.0 -- deviation disengaja")
 
     def test_ac_02_03_create_batch_list_is_jitsi_check_fails(self):
         """AC-02-03 (BR-03 / F-03): create() batch list -> 'is_jitsi' in values gagal terdeteksi."""

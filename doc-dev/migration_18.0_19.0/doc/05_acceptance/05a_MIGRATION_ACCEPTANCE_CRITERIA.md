@@ -20,12 +20,17 @@ Given `is_jitsi_param` tidak aktif
 When `_compute_jitsi_link` jalan
 Then event jatuh ke `_set_discuss_videocall_location()` (fallback Discuss) — identik dengan 18.0
 
-## AC-02 — `create()` single-dict behavior ⚠️ MF-01
+## AC-02 — `create()` single-dict behavior ⚠️ MF-01 — RESOLVED, deviation diterima dev 2026-08-26
 
 **AC-02-01** (verifies `BSL-005`)
-Given payload `create()` satu dict dengan `is_jitsi=True`/`False`
+Given payload `create()` satu dict dengan `is_jitsi=True`
 When `calendar.event.create(values)` dipanggil
-Then **observable outcome yang WAJIB identik:** `jitsi_link` akhirnya terisi format Jitsi yang benar kalau `is_jitsi_param` global aktif (via `_compute_jitsi_link`, `[BSL-006]`, terlepas jalur mana yang men-generate `access_token`-nya). **Mekanisme internal yang BOLEH berbeda dari 18.0** (dan WAJIB dicatat hasilnya, bukan diasumsikan): apakah cabang eksplisit di `create()` (`if 'is_jitsi' in values`) masih terpicu untuk single-create — per `DIFF-01`, `values` di 19.0 SELALU list (dibungkus `model_create_multi`), jadi cabang ini kemungkinan besar TIDAK terpicu lagi. Kalau `access_token`/`jitsi_link` tetap terisi benar lewat fallback compute (`[BSL-006]`) → **PASS** (observable behavior setara). Kalau TIDAK terisi/salah → **FAIL**, eskalasi.
+Then `access_token` tetap terisi non-empty (via mekanisme default core, BUKAN lagi cabang eksplisit `create()` yang tidak terpicu lagi di 19.0 — `DIFF-01`/`MF-01`). **Deviation diterima:** format token berubah dari 32-char `uuid4().hex` (18.0) jadi 36-char UUID berdash (19.0) — kosmetik, bukan regresi fungsional. Dikonfirmasi empiris G1.
+
+**AC-02-02** (verifies `BSL-005`) — **deviation diterima, BUKAN lagi "identik 18.0"**
+Given payload `create()` satu dict dengan `is_jitsi=False` DAN `access_token` eksplisit dikirim caller
+When `calendar.event.create(values)` dipanggil
+Then **(19.0, BERBEDA dari 18.0)** nilai `access_token` yang dikirim caller LOLOS APA ADANYA, TIDAK direset `False` lagi — cabang eksplisit reset di `create()` tidak terpicu untuk single-create (`MF-01`). Dev eksplisit menerima deviation ini (2026-08-26) demi mempertahankan `[BSL-009]` (quirk batch-create) tetap utuh — dua-duanya tidak bisa dipertahankan bersamaan di 19.0 (lihat `FINDINGS.md` MF-01 untuk analisis lengkap).
 
 ## AC-03 — Urutan akses field menentukan hasil compute (quirk, WAJIB tetap ada)
 

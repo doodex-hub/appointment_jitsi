@@ -105,6 +105,8 @@ Tidak ada model baru — modul murni `_inherit`, karena itu `security/ir.model.a
 - `[BSL-019]` `[MATCH]` (ref: BSL-019 17.0→18.0) Label field "Company" pada `company_param` (modul ini) bentrok dengan `company_id` (`base_setup`) di form `res.config.settings` yang sama — Odoo mencetak WARNING resmi saat instalasi. Kosmetik, tidak ada dampak fungsional.
 - `[BSL-020]` `[MATCH]` (ref: BSL-020 17.0→18.0) Field per-event `is_jitsi` TIDAK PERNAH dicek di dalam `_compute_jitsi_link` — HANYA `ir.config_parameter('is_jitsi_param')` GLOBAL yang menentukan Jitsi/Discuss untuk SEMUA event. Field `is_jitsi` per-event efeknya terbatas ke 2 tempat lain saja: `create()` (`[BSL-005]`) dan `action_join_video_call()` (`[BSL-007]`).
 
+- `[BSL-022]` `[NO-SPEC]` (ref: —) **BARU ditemukan Step 6/G1 2026-08-26 — GAP di baseline 17.0->18.0 sebelumnya, TIDAK pernah terdokumentasikan/tereksekusi test manapun.** `views/calendar_views.xml` baris 4-11 mendefinisikan `<record id="res_config_settings_action" model="ir.actions.act_window">` (action "Configuration" ke `res.config.settings` form) — XML-ID ini TIDAK PERNAH direferensikan menu/button/kode Python manapun di modul ini (dikonfirmasi grep menyeluruh) — dead code orphaned, pola yang sama seperti `controllers/appointment.py` (`[BSL-016]`) dan `generate_jitsi_link()`/`clear_jitsi_link()` (`[BSL-008]`/`[BSL-017]`). Karena tidak pernah dipanggil UI manapun dan 13 test existing juga tidak pernah mengeksekusinya, klaim ini baru ketahuan lewat instalasi nyata di 19.0 (lihat `MF-02`), bukan dari baca statis biasa.
+
 ---
 
 ## Cara Pakai
