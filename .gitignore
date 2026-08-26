@@ -6,3 +6,8 @@ __pycache__/
 *.pyo
 .claude/migration-tool-command-log.jsonl
 .claude/settings.local.json
+
+# --- fix anchoring (2026-08-26, migration 18.0->19.0): docker-env/logs/ tanpa **/ di depan
+# tidak match kalau nested di bawah folder modul. Baris lama di atas dipertahankan (harmless),
+# baris ini yang benar-benar match.
+**/docker-env/logs/

@@ -1,8 +1,8 @@
-# CLAUDE.md — appointment_jitsi migration (17.0 → 18.0)
+# CLAUDE.md — appointment_jitsi migration (18.0 → 19.0)
 
-> Diinstansiasi dari `migration-tool/templates/CLAUDE_TEMPLATE.md` pada 2026-08-24.
+> Diinstansiasi dari `migration-tool/templates/CLAUDE_TEMPLATE.md` pada 2026-08-26.
 > File ini ditaruh di **ROOT `target-codebase`** dan otomatis dibaca Cowork/Claude Code sebagai instruksi utama project ini.
-> Semua path `doc/...` yang disebut di file ini relatif terhadap `doc-dev/migration_17.0_18.0/doc/` — bukan relatif ke root `target-codebase` langsung.
+> Semua path `doc/...` yang disebut di file ini relatif terhadap `doc-dev/migration_18.0_19.0/doc/` — bukan relatif ke root `target-codebase` langsung.
 
 ---
 
@@ -11,42 +11,40 @@
 Kamu adalah migration copilot untuk project migrasi Odoo custom module berikut:
 
 - **Modul:** appointment_jitsi
-- **Versi:** 17.0 → 18.0
-- **Sifat migrasi:** port kode saja (belum ada data produksi — instalasi baru di 18.0, Step 7 Data Migration Scripts = N/A)
-- **Source masih aktif dikembangkan selama migrasi?** Tidak — source module dibekukan selama migrasi berjalan.
+- **Versi:** 18.0 → 19.0
+- **Sifat migrasi:** port kode saja (asumsi awal, sama seperti project 17.0→18.0 sebelumnya — modul ini baru sign-off UAT 2026-08-24, sangat kecil kemungkinan sudah ada instalasi produksi dengan data nyata di 18.0. **WAJIB dikonfirmasi eksplisit ke dev di Step 1 intake**, bukan diasumsikan permanen.)
+- **Source masih aktif dikembangkan selama migrasi?** Tidak (asumsi — source dibekukan selama migrasi berjalan, konsisten pola project sebelumnya. Konfirmasi di Step 1.)
 - **Environment eksekusi:** Claude Code CLI
-- **Git eksekusi:** Ya — Mode Git aktif. AI boleh `fetch`/`checkout`/`clone`/`commit`/`branch`/`diff`/`log`/`status` di `target-codebase` (repo ini) dan proses bootstrap `source-codebase`. **TIDAK PERNAH** `push`/`merge`/`rebase`/`reset --hard`/`branch -D`/`gh pr create` — semua itu di-deny keras di `.claude/settings.json`. `git push` selalu manual dev.
-- **Mulai:** 2026-08-24
+- **Git eksekusi:** Ya — Mode Git aktif. AI boleh `fetch`/`checkout`/`clone`/`commit`/`branch`/`diff`/`log`/`status` di `target-codebase` (repo ini) dan proses bootstrap `source-codebase` (sudah selesai, lihat "Status saat ini"). **TIDAK PERNAH** `push`/`merge`/`rebase`/`reset --hard`/`branch -D`/`gh pr create` — semua itu di-deny keras di `.claude/settings.json`. `git push` selalu manual dev.
+- **Mulai:** 2026-08-26
 
 Begitu sesi ini dibuka, langsung kenalkan diri sebagai migration copilot dan lanjutkan dari "Status saat ini" di bawah — jangan tunggu user menjelaskan project dari nol.
 
-> **Larangan mutlak (default): JANGAN jalankan command `git` apapun di repo lain yang terhubung ke project ini** — `migration-tool`, `source-codebase`, `native-*`, `third-party-*` (N/A, tidak ada dependency third-party). Command non-git (`ls`/`find`/`grep`/`diff`/`cat`) tetap aman dipakai kapan saja di repo manapun. Git hanya boleh dijalankan di `target-codebase` (repo ini) dan saat bootstrap `source-codebase` baru.
+> **Larangan mutlak (default): JANGAN jalankan command `git` apapun di repo lain yang terhubung ke project ini** — `migration-tool`, `source-codebase`, `native-*`, `third-party-*` (belum dikonfirmasi ada dependency third-party — cek ulang di Step 2, jangan asumsikan dari project 17.0→18.0 begitu saja walau kemungkinan besar sama). Command non-git (`ls`/`find`/`grep`/`diff`/`cat`) tetap aman dipakai kapan saja di repo manapun. Git hanya boleh dijalankan di `target-codebase` (repo ini) dan saat bootstrap `source-codebase` baru (sudah selesai).
 >
 > **Setiap kali menyerahkan aksi ke dev (git push, buka PR, jalankan docker, dst) — beri langkah bernomor konkret SAAT ITU JUGA.**
+>
+> **Di CLI: JALAN TERUS dari step ke step, jangan berhenti proaktif tanya "mau lanjut atau dicek dulu?" tanpa alasan kuat.** Setelah Step 1 intake selesai, lanjut sampai Step 11 tanpa henti KECUALI blocker faktual / keputusan berisiko tinggi tanpa default jelas / checkpoint G1 / Step 11 selesai (lihat `migration-tool/ai-doc/USAGE_GUIDE.md`).
 
 ---
 
 ## Source of Truth & Forbidden Actions (WAJIB DIPATUHI)
 
-**Source of truth:** kode 17.0 yang berjalan (didokumentasikan di `01b_BASELINE_SPEC.md`, diadaptasi dari `doc-dev/backfill/` yang sudah ada + FINDINGS.md 13 temuan terverifikasi via test nyata) adalah kebenaran mutlak. Semua business logic, workflow, side effect, dan UX di 18.0 **harus identik** dengan 17.0 — **termasuk 13 bug/quirk yang sudah dikonfirmasi di `FINDINGS.md` backfill (F-01 s/d F-13)**.
-
-**Keputusan eksplisit dev (2026-08-24) — bug-for-bug migration, TIDAK ADA fix "sekalian":**
-- **F-13** (paling kritis — `data/mail_template_data.xml` tidak terdaftar di manifest, fitur email Jitsi TIDAK PERNAH aktif): **dipertahankan apa adanya di 18.0**. Manifest 18.0 TIDAK boleh mendaftarkan file itu — kalau nanti mau diperbaiki, itu perubahan terpisah di luar scope migrasi ini, bukan bagian dari port 17.0→18.0.
-- **F-01 s/d F-12** (12 temuan lain — lihat `doc-dev/backfill/FINDINGS.md` untuk detail): **semua dipertahankan apa adanya**. Jangan diperbaiki "sambil migrasi", termasuk yang kelihatan seperti bug jelas (mis. F-02 toggle `is_jitsi` tidak recompute, F-03 `create()` tidak batch-safe, F-05 `company_param` global, F-07 URL tidak di-slug, F-09 file HTML nyasar).
+**Source of truth:** kode 18.0 yang berjalan (didokumentasikan di `01b_BASELINE_SPEC.md`, diturunkan dari baseline 17.0→18.0 yang sudah lulus UAT + `FINDINGS.md` 17.0→18.0 F-01..F-13 yang semuanya dipertahankan bug-for-bug di 18.0) adalah kebenaran mutlak. Semua business logic, workflow, side effect, dan UX di 19.0 **harus identik** dengan 18.0 — termasuk seluruh quirk/bug yang sudah dikonfirmasi ada di 18.0.
 
 **Dilarang** (kecuali eksplisit disetujui & dicatat sebagai perubahan yang disengaja di intake):
 - Menambah atau menghapus fitur
 - Mengubah business rule, workflow, atau state transition
-- Memperbaiki bug yang sudah ada di 17.0 (lihat keputusan F-01..F-13 di atas)
-- Refactor demi readability/style/performance (KECUALI wajib untuk kompatibilitas 18.0)
+- Memperbaiki bug yang sudah ada di 18.0 (termasuk F-13 — email Jitsi tidak pernah aktif — dan F-01..F-12 dari project 17.0→18.0, kecuali dev eksplisit minta scope terpisah)
+- Refactor demi readability/style/performance (KECUALI wajib untuk kompatibilitas 19.0)
 - Redesign UI/UX demi estetika
 - Rename model/field/XML-ID kecuali wajib untuk kompatibilitas
 
-**Kapan STOP dan eskalasi ke user:** perubahan mungkin mempengaruhi business logic; fitur deprecated di 18.0 tidak punya padanan jelas; ada beberapa cara migrasi valid dengan efek samping berbeda; dampak perubahan ke behavior tidak pasti.
+**Kapan STOP dan eskalasi ke user:** perubahan mungkin mempengaruhi business logic; fitur deprecated di 19.0 tidak punya padanan jelas; ada beberapa cara migrasi valid dengan efek samping berbeda; dampak perubahan ke behavior tidak pasti.
 
 Format eskalasi:
 ```
-ESCALATION — Migrasi 18.0
+ESCALATION — Migrasi 19.0
 Step/Fase: {step/fase}
 Modul: appointment_jitsi
 Isu: {deskripsi singkat}
@@ -62,8 +60,8 @@ Perlu keputusan user sebelum lanjut.
 Sebelum membuat perubahan apapun, baca berurutan:
 
 1. `01_intake/01a_MIGRATION_INTAKE.md` — scope, forbidden actions, definition of done
-2. `migration-tool/knowledge/version-diffs/17-to-18.md` — constraint teknis umum
-3. `01_intake/01b_BASELINE_SPEC.md` — apa yang modul lakukan (diadaptasi dari `doc-dev/backfill/spec/01A_FUNCTIONAL_SPEC.md` + `FINDINGS.md`)
+2. `migration-tool/knowledge/version-diffs/18-to-19.md` — constraint teknis umum (§1a sudah berisi 1 temuan nyata dari `advanced_sales_analysis`: rename `sale.order.line.tax_id`→`tax_ids` — cek relevansinya ke modul ini di Step 2)
+3. `01_intake/01b_BASELINE_SPEC.md` — apa yang modul lakukan di 18.0 (diturunkan dari baseline 17.0→18.0 + FINDINGS)
 4. `FINDINGS.md` (root `doc/`, kalau sudah ada) — daftar gap/bug/ambiguitas migrasi yang masih terbuka
 5. `03_spec/03_MIGRATION_SPEC.md` (kalau sudah ada) — risiko spesifik modul ini
 6. Step/fase yang sedang berjalan + prompt fase terkait di `migration-tool/templates/06b_PROMPTS_BY_PHASE.md`
@@ -82,7 +80,7 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | 4 | Spec completeness review | `04_completeness/04_SPEC_COMPLETENESS_REVIEW.md` | **Ya** |
 | 5 | Acceptance criteria & test plan | `05_acceptance/05a_...md` + `05b_...md` | Tidak |
 | 6 | Code migration | kode di `appointment_jitsi/` + `06_implementation/06c_IMPLEMENTATION_LOG.md` | Tidak (disiplin per-fase A1→G2) |
-| 7 | Data migration scripts | — **N/A, port kode saja** | — |
+| 7 | Data migration scripts | — kondisional, cuma kalau sifat migrasi = upgrade instance | — |
 | 8 | Code review | `08_review/08_CODE_REVIEW.md` | **Ya** |
 | 9 | Dev testing | `09_devtest/09_DEV_TESTING.md` | **Ya** |
 | 10 | QA testing | `10_qa/10_BUSINESS_FLOW_MIGRATION.md` | **Ya** |
@@ -94,27 +92,11 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 ## Status saat ini
 
-**Step 1 — Intake & Scope: ✔️ LULUS GATE (2026-08-24, approved dev).** `CLAUDE.md`, `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md` (21 klaim `BSL-001..021`), `FINDINGS.md` (`MF-01..03`), `PROMPT_LOG.md` sudah di-commit (`288ccf6`) di branch `migration/18.0_target`. Keputusan kunci: bug-for-bug migration — F-13 (email Jitsi tidak pernah aktif) dan F-01..F-12 semua dipertahankan apa adanya, tidak ada fix "sekalian". Dependency `appointment` dikonfirmasi Enterprise-only di 17.0 DAN 18.0.
+**Step 0 — Bootstrap: ✔️ Selesai (2026-08-26).** Branch `migration/19.0_target` dibuat lokal dari `origin/migration/18.0` (commit `3a563b2`, identik dengan `migration/18.0_target` — hasil akhir migrasi 17.0→18.0 yang sudah UAT sign-off). Folder `source-codebase` baru di-clone sejajar (`appointment-jitsi-migration-19-source`, checkout `migration/18.0`, read-only). Config `.claude/settings.json`/`.gitignore` diinstansiasi ulang dari `migration-tool/templates/cli-config/` versi terbaru dengan path project ini (dicek dulu isi config yang diwarisi branch basis — ternyata sudah versi `migration-tool` yang benar dari project 17.0→18.0 sebelumnya, bukan config tool lama, jadi tidak ada konflik berarti selain path yang perlu diupdate ke referensi 19.0). `CLAUDE.md` ini diinstansiasi dari template. Belum ada commit baru dibuat di branch ini (working tree masih identik `migration/18.0` + file config baru, akan di-commit bareng Step 1).
 
-**Step 2 — Diff & Compatibility Analysis: ✅ selesai (2026-08-24).** Semua simbol native yang dipakai modul (`calendar.event` fields/methods, view inherit `res_config_settings_view_form`, 2 mail template XML-ID, dependency `appointment`) dicek langsung ke `native-source`/`native-target` + `native-*-enterprise` — **byte-identical/tidak ada perubahan breaking** di 17.0→18.0 untuk modul kecil ini. Satu koreksi ke knowledge base umum dicatat sebagai kandidat di `migration-tool/migration-records/appointment_jitsi_17.0_18.0/SUMMARY.md` (soal `create()`/`@api.model_create_multi` — bukan hard requirement). Kesimpulan risiko: RENDAH.
+**Step 1 — Intake & Scope: ✔️ LULUS GATE (2026-08-26).** Sifat migrasi (port kode saja), source dibekukan (Tidak aktif dikembangkan), dan tidak ada dependency OCA/third-party — ketiganya dikonfirmasi eksplisit dev via `AskUserQuestion`, semua opsi Recommended dipilih. Dependency Enterprise `appointment` dikonfirmasi ULANG tetap `license: OEEL-1` di 19.0 (dicek langsung `enterprise19.0/odoo/addons/appointment/__manifest__.py`). `native-target`/`native-target-enterprise` 19.0 dikonfirmasi SATU folder gabungan (`enterprise19.0`, bukan git repo). Baseline spec 21 klaim `BSL-001`..`BSL-021` diturunkan `[MATCH]` penuh dari baseline 17.0→18.0 yang sudah lolos dev+QA testing nyata di 18.0 — 0 `[GAP]`, 0 `[NO-SPEC]`. `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md`, `FINDINGS.md`, `PROMPT_LOG.md` sudah ditulis di `doc-dev/migration_18.0_19.0/doc/`.
 
-**Step 3 — Migration Spec: ✅ selesai.** Strategi: port langsung 1:1, hanya bump versi manifest — tidak ada rewrite logic (dikonfirmasi Step 2: nol breaking change berdampak).
-
-**Step 4 — Spec Completeness Review: ✔️ LULUS GATE (2026-08-24).** Semua 20 file source module + 21 klaim `BSL-NNN` + 3 finding `MF-NNN` ter-cover di migration spec, tidak ada gap.
-
-**Step 5 — Acceptance Criteria & Test Plan: ✅ selesai.** 14 AC (`AC-01`..`AC-14`) diturunkan dari 21 `BSL-NNN`, dipetakan ke test existing (13 method backfill) + 1 test baru (`AC-04-01`).
-
-**Step 6 — Code Migration: ✔️ selesai, G1+G2 LULUS.** Applicability Check: cuma C1 relevan, sisanya N/A. Perubahan aktual: bump manifest `18.0.1.0.0` + README compatibility (NOL perubahan logic). G1 (install test, Mode C) sukses di percobaan pertama: modul load bersih 0.23s/118 queries, 13/13 test existing PASS terhadap Odoo 18 Enterprise + `enterprise18`.
-
-**Step 8 — Code Review: ✔️ LULUS GATE (2026-08-24).** 0 issue 🔴/🟡, 4 Info (3 bug-for-bug disengaja + 1 kolisi method baru ditemukan: `action_join_video_call()` vs core, diverifikasi BENIGN & pre-existing sejak 17.0, dicatat `FINDINGS.md` MF-04).
-
-**Step 9 — Dev Testing: ✔️ LULUS GATE (2026-08-24).** 13/13 test PASS (`0 failed, 0 error(s)`), semua quirk F-01..F-13 tereproduksi PERSIS di 18.0 termasuk F-13 (email tetap tidak aktif — dikonfirmasi `muncul_di_body=False`). Satu gap non-blocking: `action_join_video_call()` belum ada test eksplisit (risiko rendah).
-
-**Step 10 — QA Testing: ✔️ LULUS GATE (2026-08-24).** 5/5 skenario Pass (AI-interaktif via Claude in Chrome, server 18.0 hidup) — termasuk reproduksi LIVE quirk `[BSL-010]` (Videocall URL kosong sampai `jitsi_link` diakses) dan konfirmasi format link Jitsi persis sesuai baseline. QA container sudah di-teardown.
-
-**Step 11 — UAT Sign-off: ✔️ LULUS GATE (2026-08-24).** Kuncoro mengonfirmasi eksplisit di chat ("selesai saya push. UAT anggap selesai") — sign-off dicatat di `11_UAT_CHECKLIST.md`. Branch `migration/18.0_target` sudah di-push ke origin (dikonfirmasi via `git fetch` + `git log origin/migration/18.0_target`).
-
-**🎉 MIGRASI `appointment_jitsi` 17.0 → 18.0 SELESAI PENUH — semua 11 step lulus, tidak ada langkah tersisa di project ini.** Kalau ada kerja lanjutan (mis. memperbaiki F-13 atau finding lain di luar scope bug-for-bug), itu project migrasi/perbaikan TERPISAH, bukan lanjutan dokumen ini.
+**Selanjutnya:** Step 2 — Diff & Compatibility Analysis (cek langsung `calendar`/`appointment` API 18.0 vs 19.0 via `native-source`/`native-target`).
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -122,17 +104,17 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 | # | Step | Dokumen | Status | Gate |
 |---|---|---|---|---|
-| 1 | Intake & Scope | `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md` | ✔️ Lulus gate | ✔️ Disetujui 2026-08-24 |
-| 2 | Diff & Compatibility Analysis | `02_DIFF_ANALYSIS.md` | ✅ Selesai | Tidak ada gate formal |
-| 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ✅ Selesai | — |
-| 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-24, tidak ada gap |
-| 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ✅ Selesai | — |
-| 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ✔️ Selesai, G1+G2 lulus | — |
-| 7 | Data Migration Scripts | — | — (N/A, port kode saja) | — |
-| 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 0 critical |
-| 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 13/13 pass |
-| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ✔️ Lulus gate | ✔️ 2026-08-24, 5/5 skenario |
-| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ✔️ Lulus gate | ✔️ 2026-08-24, Kuncoro sign-off |
+| 1 | Intake & Scope | `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md` | ✔️ Lulus gate | ✔️ Disetujui 2026-08-26 |
+| 2 | Diff & Compatibility Analysis | `02_DIFF_ANALYSIS.md` | ⬜ Belum mulai | Tidak ada gate formal |
+| 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ⬜ Belum mulai | — |
+| 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ⬜ Belum mulai | — |
+| 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ⬜ Belum mulai | — |
+| 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ⬜ Belum mulai | — |
+| 7 | Data Migration Scripts | — | ⬜ Belum mulai / — (n/a kalau port kode saja) | — |
+| 8 | Code Review | `08_CODE_REVIEW.md` | ⬜ Belum mulai | — |
+| 9 | Dev Testing | `09_DEV_TESTING.md` | ⬜ Belum mulai | — |
+| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ⬜ Belum mulai | — |
+| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ⬜ Belum mulai | — |
 
 Legenda: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis · ✔️ Disetujui/lulus gate.
 
@@ -142,30 +124,23 @@ Legenda: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis 
 
 | Folder | Path | Peran | Read-only? |
 |---|---|---|---|
-| `target-codebase` (folder UTAMA) | `D:\Kuncoro\doodex\repo\appointment-jitsi-migration-18` (repo ini, branch `migration/18.0_target`) | Tempat kode migrasi 18.0 ditulis | Tidak |
-| `source-codebase` | `D:\Kuncoro\doodex\repo\appointment-jitsi-migration-18-source` (branch `migration/17.0_source`, dari `backfill/17.0` — sudah berisi functional spec + tests backfill) | Baca modul 17.0 asli | Ya |
-| `migration-tool` | `D:\Kuncoro\doodex\repo\migration-tool-project\migration-tool` | Template + `ai-doc/OVERVIEW.md`; tulis ke `migration-records/appointment_jitsi_17.0_18.0/` | Tulis di `migration-records/` saja |
-| `native-source` (Community 17.0) | `D:\Kuncoro\doodex\repo\odoo17` (branch `17.0`) | Cross-check API core 17.0 | Ya |
-| `native-target` (Community 18.0) | `D:\Kuncoro\doodex\repo\odoo18` (branch `18.0`) | Diff API core 18.0 | Ya |
-| `native-source-enterprise` (Enterprise 17.0) | `D:\Kuncoro\doodex\repo\enterprise17` (branch `17.0`) | **WAJIB** — `appointment` adalah modul Enterprise (dikonfirmasi: ada di `enterprise17/appointment`, tidak ada di `odoo17/addons`) | Ya |
-| `native-target-enterprise` (Enterprise 18.0) | `D:\Kuncoro\doodex\repo\enterprise18` (branch `18.0`) | **WAJIB** — sama alasan di atas, dikonfirmasi ada di `enterprise18/appointment` | Ya |
-| `third-party-source`/`third-party-target` | — | N/A — dikonfirmasi tidak ada dependency OCA/vendor | — |
+| `target-codebase` (folder UTAMA) | `D:\Kuncoro\doodex\repo\appointment-jitsi-migration-19` (repo ini, branch `migration/19.0_target`) | Tempat kode migrasi 19.0 ditulis | Tidak |
+| `source-codebase` | `D:\Kuncoro\doodex\repo\appointment-jitsi-migration-19-source` (branch `migration/18.0` — hasil final migrasi 17.0→18.0) | Baca modul 18.0 asli | Ya |
+| `migration-tool` | `D:\Kuncoro\doodex\repo\migration-tool-project\migration-tool` | Template + `ai-doc/OVERVIEW.md`; tulis ke `migration-records/appointment_jitsi_18.0_19.0/` | Tulis di `migration-records/` saja |
+| `native-source` (Community 18.0) | `D:\Kuncoro\doodex\repo\odoo18` (branch `18.0`) | Cross-check API core 18.0 | Ya |
+| `native-source-enterprise` (Enterprise 18.0) | `D:\Kuncoro\doodex\repo\enterprise18` | Cross-check dependency Enterprise di 18.0 (`appointment` dikonfirmasi Enterprise-only di project 17.0→18.0) | Ya |
+| `native-target` (Community 19.0) + `native-target-enterprise` (Enterprise 19.0) | `D:\Kuncoro\doodex\repo\enterprise19.0` — **SATU folder, dua peran** (dikonfirmasi bukan addons-only, tapi repo Odoo penuh dengan Community+Enterprise tergabung di `odoo/addons/` yang sama; BUKAN git repo, hasil extract) | Diff API core + Enterprise 19.0 | Ya |
+| `third-party-source`/`third-party-target` | — | Belum dikonfirmasi ulang untuk pasangan versi ini — cek Step 2, kemungkinan besar tetap N/A seperti project 17.0→18.0 | — |
 
-**Peringatan Enterprise (dari lesson `purchase_product_optional`):** dependency `appointment` berlisensi Enterprise di KEDUA versi (17.0 dan 18.0) — sudah dikonfirmasi langsung dari isi folder `enterprise17`/`enterprise18`, bukan diasumsikan. Step 2 wajib cross-check diff API `appointment` lewat `native-*-enterprise`, bukan `native-*` Community saja.
+**Peringatan Enterprise:** dependency `appointment` berlisensi Enterprise di 18.0 (dikonfirmasi project sebelumnya). **WAJIB dicek ulang apakah masih Enterprise-only di 19.0** — jangan asumsikan otomatis sama, verifikasi langsung ke `enterprise19.0`.
 
 ---
 
 ## Knowledge base
 
-Sebelum step 2 mulai analisis, cek `migration-tool/knowledge/INDEX.md` dan `knowledge/version-diffs/17-to-18.md` — apakah sudah ada entry untuk pasangan versi ini atau dependency `appointment`/`calendar` yang relevan.
+Sebelum step 2 mulai analisis, cek `migration-tool/knowledge/INDEX.md` dan `knowledge/version-diffs/18-to-19.md` — apakah sudah ada entry untuk pasangan versi ini atau dependency `appointment`/`calendar` yang relevan. **Sudah ada 1 project migrasi 18.0→19.0 nyata sebelumnya** (`advanced_sales_analysis`) — §1a file itu berisi temuan terverifikasi (`sale.order.line.tax_id`→`tax_ids`), kemungkinan tidak relevan langsung ke `appointment_jitsi` (modul ini tidak menyentuh `sale.order.line`), tapi tetap cek dependency-compat lain yang mungkin relevan (`calendar`, `appointment`).
 
-Temuan general baru (bukan spesifik `appointment_jitsi`) ditulis ke `migration-tool/migration-records/appointment_jitsi_17.0_18.0/SUMMARY.md` — **BUKAN** langsung ke `migration-tool/knowledge/`. Promosi hanya lewat sesi curation eksplisit (`templates/CURATION_PROMPT.md`).
-
----
-
-## Catatan keamanan (ditemukan 2026-08-24, di luar scope migrasi tapi perlu diketahui dev)
-
-Beberapa repo referensi di `D:\Kuncoro\doodex\repo\` (`appointment-jitsi-17`, `enterprise18`, dan clone project migrasi lain) punya GitHub Personal Access Token tertanam plaintext di `git remote -v` (URL `https://<user>:<token>@github.com/...`). Bukan bagian dari kode `appointment_jitsi`, tapi risiko kebocoran nyata kalau folder-folder itu pernah di-share/backup. Rekomendasi: rotate token yang bersangkutan, pakai credential helper Git alih-alih menaruh token di URL remote. `target-codebase`/`source-codebase` project ini sendiri sudah pakai URL bersih (tanpa token).
+Temuan general baru (bukan spesifik `appointment_jitsi`) ditulis ke `migration-tool/migration-records/appointment_jitsi_18.0_19.0/SUMMARY.md` — **BUKAN** langsung ke `migration-tool/knowledge/`. Promosi hanya lewat sesi curation eksplisit (`templates/CURATION_PROMPT.md`).
 
 ---
 
@@ -174,4 +149,5 @@ Beberapa repo referensi di `D:\Kuncoro\doodex\repo\` (`appointment-jitsi-17`, `e
 - Rujukan lengkap semua keputusan desain: `migration-tool/ai-doc/OVERVIEW.md`
 - Diagram alur 11 step: `migration-tool/ai-doc/diagrams/migration-workflow.svg`
 - Diagram dua jalur dokumen: `migration-tool/ai-doc/diagrams/spec-vs-test-tracks.svg`
-- Dokumen backfill 17.0 (dasar baseline spec): `doc-dev/backfill/spec/01A_FUNCTIONAL_SPEC.md`, `01B_ACCEPTANCE_CRITERIA.md`, `FINDINGS.md`
+- Dokumen migrasi 17.0→18.0 (dasar baseline spec 18.0): `doc-dev/migration_17.0_18.0/doc/`
+- Dokumen backfill 17.0 (dasar baseline spec 17.0): `doc-dev/backfill/spec/01A_FUNCTIONAL_SPEC.md`, `01B_ACCEPTANCE_CRITERIA.md`, `FINDINGS.md`
