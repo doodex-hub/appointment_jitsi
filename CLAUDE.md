@@ -114,12 +114,7 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 11 — UAT Sign-off: ✔️ LULUS GATE (2026-08-26).** Kuncoro mengonfirmasi eksplisit di chat ("Ya, UAT selesai — disetujui"), memahami & menerima kedua deviation (`MF-01` format `access_token`, `MF-02` fix `target=inline`) — sign-off dicatat di `11_UAT_CHECKLIST.md`.
 
-**🎉 MIGRASI `appointment_jitsi` 18.0 → 19.0 SELESAI PENUH — semua 11 step lulus, tidak ada langkah tersisa di project ini.** Branch `migration/19.0_target` sudah berisi 7 commit (Step 1 s/d Step 11), belum di-push ke origin.
-
-**Langkah berikutnya (manual dev, kapan pun siap):**
-1. Review diff branch ini kalau mau: `git log --oneline origin/migration/18.0..migration/19.0_target`
-2. Push branch ke origin secara manual: `git push origin migration/19.0_target`
-3. (Opsional) Buka PR/merge sesuai alur repo Anda — di luar scope AI, sepenuhnya keputusan Anda.
+**🎉 MIGRASI `appointment_jitsi` 18.0 → 19.0 SELESAI PENUH — semua 11 step lulus, tidak ada langkah tersisa di project ini.** Branch `migration/19.0_target` sudah di-push ke origin (dikonfirmasi via `git fetch` + `git log origin/migration/19.0_target`, 7 commit, `7603fed`).
 
 Kalau ada kerja lanjutan (mis. mempromosikan 3 temuan general ke `knowledge/version-diffs/18-to-19.md` lewat sesi curation, atau memperbaiki `MF-01`/F-13 di luar scope bug-for-bug), itu project terpisah, bukan lanjutan dokumen ini.
 
