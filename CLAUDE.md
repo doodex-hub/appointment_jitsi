@@ -96,7 +96,9 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 1 — Intake & Scope: ✔️ LULUS GATE (2026-08-26).** Sifat migrasi (port kode saja), source dibekukan (Tidak aktif dikembangkan), dan tidak ada dependency OCA/third-party — ketiganya dikonfirmasi eksplisit dev via `AskUserQuestion`, semua opsi Recommended dipilih. Dependency Enterprise `appointment` dikonfirmasi ULANG tetap `license: OEEL-1` di 19.0 (dicek langsung `enterprise19.0/odoo/addons/appointment/__manifest__.py`). `native-target`/`native-target-enterprise` 19.0 dikonfirmasi SATU folder gabungan (`enterprise19.0`, bukan git repo). Baseline spec 21 klaim `BSL-001`..`BSL-021` diturunkan `[MATCH]` penuh dari baseline 17.0→18.0 yang sudah lolos dev+QA testing nyata di 18.0 — 0 `[GAP]`, 0 `[NO-SPEC]`. `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md`, `FINDINGS.md`, `PROMPT_LOG.md` sudah ditulis di `doc-dev/migration_18.0_19.0/doc/`.
 
-**Selanjutnya:** Step 2 — Diff & Compatibility Analysis (cek langsung `calendar`/`appointment` API 18.0 vs 19.0 via `native-source`/`native-target`).
+**Step 2 — Diff & Compatibility Analysis: ✅ Selesai (2026-08-26).** Semua simbol native yang dipakai modul (`calendar.event` fields/methods, view inherit `res_config_settings_view_form`, 2 mail template XML-ID, dependency `appointment`) dicek langsung ke `native-source`/`native-target` + `native-*-enterprise` — mayoritas byte-identical/tidak ada perubahan breaking. **Satu temuan penting (`MF-01`/`DIFF-01`):** mekanisme `@api.model create` berubah — di 19.0 di-route ke `model_create_multi()` (bukan `model_create_single()` seperti 18.0), `values` di `create()` modul ini SEKARANG SELALU list, bukan dict mentah. Dampak ke `[BSL-005]`/`[BSL-009]` belum bisa dipastikan tanpa eksekusi test nyata — **WAJIB diverifikasi ulang di Step 9**, bukan diasumsikan aman. Kesimpulan risiko: **RENDAH-SEDANG** (naik dari RENDAH di migrasi 17.0→18.0).
+
+**Selanjutnya:** Step 3 — Migration Spec (strategi: port 1:1 + bump versi manifest, dengan catatan verifikasi khusus MF-01 di Step 9).
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -105,7 +107,7 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | # | Step | Dokumen | Status | Gate |
 |---|---|---|---|---|
 | 1 | Intake & Scope | `01a_MIGRATION_INTAKE.md`, `01b_BASELINE_SPEC.md` | ✔️ Lulus gate | ✔️ Disetujui 2026-08-26 |
-| 2 | Diff & Compatibility Analysis | `02_DIFF_ANALYSIS.md` | ⬜ Belum mulai | Tidak ada gate formal |
+| 2 | Diff & Compatibility Analysis | `02_DIFF_ANALYSIS.md` | ✅ Selesai | Tidak ada gate formal (1 temuan MF-01 dicatat, tidak blocking) |
 | 3 | Migration Spec (teknis) | `03_MIGRATION_SPEC.md` | ⬜ Belum mulai | — |
 | 4 | Spec Completeness Review | `04_SPEC_COMPLETENESS_REVIEW.md` | ⬜ Belum mulai | — |
 | 5 | Acceptance Criteria & Test Plan | `05a_...md`, `05b_...md` | ⬜ Belum mulai | — |

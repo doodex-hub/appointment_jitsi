@@ -19,7 +19,7 @@
 |---|---|---|---|
 | 0 — Bootstrap (sebelum step 1 resmi) | 1 | 0 | Prompt awal dev ("migrasi 18 ke 19, branch target migration/19.0_target, source copy dari migration/18.0") memicu seluruh bootstrap: pre-flight Mode Git (tanya GUI client — dijawab sudah tertutup), fetch, checkout -b, clone source-codebase sibling + verifikasi persistensi, instantiasi `CLAUDE.md`/`.claude/settings.json`/`.gitignore`. |
 | 1 — Intake & Baseline Spec | 1 | 0 | Satu putaran `AskUserQuestion` (3 pertanyaan: sifat migrasi, source aktif dikembangkan, dependency OCA) dijawab semua dengan opsi Recommended — dihitung sebagai 1 prompt normal (gate konfirmasi awal, bukan tool-fix). |
-| 2 — Diff & Compatibility Analysis | | | |
+| 2 — Diff & Compatibility Analysis | 1 | 0 | Dikerjakan menerus tanpa berhenti (JALAN TERUS post-Step-1) dalam prompt yang sama dengan Step 1. Menemukan MF-01 (`@api.model create` routing berubah 18→19) — didokumentasikan + dilanjutkan, tidak eskalasi (risiko sedang-tinggi tapi ada rekomendasi jelas: port 1:1, verifikasi empiris Step 9). |
 | 3 — Migration Spec | | | |
 | 4 — Spec Completeness Review | | | |
 | 5 — Acceptance Criteria & Test Plan | | | |
@@ -29,7 +29,7 @@
 | 9 — Dev Testing | | | |
 | 10 — QA Testing | | | |
 | 11 — UAT Sign-off | | | |
-| **Total** | 2 | 0 | |
+| **Total** | 3 | 0 | |
 
 ## Catatan Definisi
 
