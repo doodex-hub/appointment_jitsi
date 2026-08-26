@@ -6,7 +6,7 @@
 
 > Kriteria sukses: user (Kuncoro) TIDAK merasakan bedanya dibanding 18.0, **kecuali** dua deviation yang sudah disetujui eksplisit selama migrasi ini (lihat "Review Item Out-of-Scope" di bawah).
 >
-> **Status:** 🔄 Menunggu konfirmasi eksplisit dev — BELUM ditutup. Step 6-10 semuanya lulus gate dengan bukti eksekusi nyata (13/13 test Step 9, 5/5 skenario Step 10), tapi UAT sign-off SELALU butuh konfirmasi eksplisit pemilik modul, bukan self-approve AI (konsisten pola project 17.0→18.0).
+> **Status:** ✅ Ditutup 2026-08-26 — Kuncoro (owner modul, single owner project ini) mengonfirmasi eksplisit ("Ya, UAT selesai — disetujui") bahwa UAT dianggap selesai, memahami & menerima kedua deviation (`MF-01`, `MF-02`) yang tercatat di dokumen ini. Migrasi `appointment_jitsi` 18.0→19.0 dinyatakan **SELESAI PENUH**.
 
 ---
 
@@ -64,7 +64,7 @@ Stakeholder (Kuncoro) perlu mengonfirmasi sadar & menerima item berikut:
 - **Diwarisi dari 18.0 (sudah disetujui migrasi sebelumnya):** Email konfirmasi tidak pernah menampilkan link Jitsi (F-13/`[BSL-015]`) — fitur inti yang diklaim modul TIDAK BEKERJA sejak 17.0, tetap tidak bekerja di 19.0. 12 quirk/bug lain (F-01..F-12/`BSL-NNN` terkait) — lihat `01b_BASELINE_SPEC.md`.
 - **BARU di migrasi 18.0→19.0 ini (`MF-01`, sudah disetujui dev di Step 6 via ESCALATION real-time):** format `access_token` berubah (32-char hex → 36-char dash) untuk single-record create, dan reset `access_token=False` saat `is_jitsi=False` tidak lagi terjadi untuk single-create. Keputusan: diterima demi mempertahankan `[BSL-009]` (quirk batch-create) tetap utuh — dua-duanya tidak bisa dipertahankan bersamaan di Odoo 19.0 (root cause: perubahan mekanisme `@api.model create` di ORM core, lihat `FINDINGS.md` MF-01 untuk analisis lengkap).
 - **BARU di migrasi ini (`MF-02`, fix wajib, sudah diterapkan):** satu record `ir.actions.act_window` dead code/orphaned (`[BSL-022]`) diubah `target="inline"`→`target="current"` karena `inline` dihapus total dari Odoo 19.0 — nol dampak observable (record tidak pernah dipanggil UI manapun).
-- [ ] Dikonfirmasi diterima — *(menunggu konfirmasi dev)*
+- [x] Dikonfirmasi diterima — Kuncoro, 2026-08-26 (chat, bersamaan dengan konfirmasi UAT selesai)
 
 ## Prasyarat Sebelum Go-Live Produksi
 
@@ -75,6 +75,6 @@ Stakeholder (Kuncoro) perlu mengonfirmasi sadar & menerima item berikut:
 
 | Role | Nama | Tanggal | Tanda tangan |
 |---|---|---|---|
-| Owner modul | Kuncoro | *(menunggu)* | *(menunggu konfirmasi eksplisit di chat)* |
+| Owner modul | Kuncoro | 2026-08-26 | Dikonfirmasi via chat ("Ya, UAT selesai — disetujui") |
 
-> **BELUM diisi** — menunggu konfirmasi eksplisit Kuncoro di chat, konsisten aturan `templates/11_UAT_CHECKLIST.md` (AI tidak boleh self-approve UAT).
+> Diisi berdasarkan konfirmasi eksplisit Kuncoro di chat 2026-08-26, bukan diasumsikan sepihak oleh AI.

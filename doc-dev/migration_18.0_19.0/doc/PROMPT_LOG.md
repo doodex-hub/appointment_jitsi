@@ -28,8 +28,8 @@
 | 8 — Code Review | 1 | 0 | JALAN TERUS dari Step 6, prompt yang sama. Gate lulus tanpa 🔴/🟡. |
 | 9 — Dev Testing | 1 | 0 | JALAN TERUS, prompt yang sama. Menulis ulang hasil G1 percobaan ke-4 sebagai gate formal. |
 | 10 — QA Testing | 1 | 0 | JALAN TERUS, prompt yang sama. Sandboxed Browser pane gagal (sama pola 17->18), beralih Claude in Chrome. Tour onboarding sempat mengganggu klik (retry, bukan tool-fix). |
-| 11 — UAT Sign-off | 1 | 0 | Draft checklist ditulis, menunggu konfirmasi eksplisit dev sebelum ditutup (checkpoint yang memang didesain untuk berhenti). |
-| **Total** | 13 | 0 | |
+| 11 — UAT Sign-off | 2 | 0 | Draft checklist ditulis (prompt 1), lalu 1 prompt konfirmasi eksplisit dev ("Ya, UAT selesai — disetujui") menutup gate (checkpoint yang memang didesain untuk berhenti). |
+| **Total** | 14 | 0 | |
 
 ## Catatan Definisi
 
@@ -37,6 +37,9 @@
 
 ## Ringkasan Akhir Project (isi setelah step 11 selesai)
 
-- Step dengan rasio Tool-fix tertinggi: ...
-- Step yang paling "bersih": ...
-- Lihat `ai-doc/ROADMAP.md` §5 di `migration-tool`.
+- **14 total prompt, 0 Tool-fix** — seluruhnya prompt Normal (flow migrasi standar), tidak ada satupun yang mengubah `migration-tool/templates/`/`ai-doc/` itu sendiri.
+- **Step dengan rasio Tool-fix tertinggi:** tidak ada (0 di semua step) — beda dari project `advanced_sales_analysis` (yang punya 2 tool-fix di Step 0/1 soal config lama & folder gabungan Enterprise, sudah dipromosikan curation sebelumnya sehingga TIDAK terulang di project ini).
+- **Step yang paling "bersih":** Step 1, 3, 4, 5, 8 (1 prompt masing-masing, JALAN TERUS tanpa hambatan) — kandidat kuat otomasi kalau pola ini konsisten di project berikutnya.
+- **Step paling "berat":** Step 6 (3 prompt) — bukan karena proses tool-nya buruk, tapi karena modul ini genuinely menemukan 2 infra blocker BARU (pgvector, `target=inline`) dan 1 dampak nyata `MF-01` yang butuh keputusan dev di tengah jalan. Ini justru BUKTI proses `migration-tool` bekerja sesuai desain (temuan real ditangkap sebelum lolos ke produksi), bukan kelemahan.
+- **Data poin penting:** project migrasi 18.0→19.0 KEDUA lewat `migration-tool` (setelah `advanced_sales_analysis`) — MENGHASILKAN 2 temuan general baru (pgvector, `target=inline`) yang TIDAK ditemukan project pertama, mengonfirmasi `knowledge/version-diffs/18-to-19.md` masih jauh dari lengkap untuk pasangan versi ini. Lihat `migration-records/appointment_jitsi_18.0_19.0/SUMMARY.md`.
+- Lihat `ai-doc/ROADMAP.md` §5 di `migration-tool` — tulis balik ringkasan ini ke tabel agregat di sana begitu sesi curation berikutnya berjalan.

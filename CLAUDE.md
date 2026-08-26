@@ -112,9 +112,16 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 
 **Step 10 — QA Testing: ✔️ LULUS GATE (2026-08-26).** 5/5 skenario Pass (AI-interaktif via Claude in Chrome, server 19.0 hidup) — termasuk konfirmasi ULANG independen live untuk `MF-01` (format `access_token` 36-char dash di S-03) dan reproduksi live quirk `[BSL-002/006/007/013/020]`. S-04 (`BSL-010`) tidak tereproduksi lewat metode RPC yang dipakai (sensitif pola akses) — dicatat sebagai catatan metodologi, BUKAN gagal, karena Step 9 sudah membuktikan quirk ini valid via akses atribut langsung. QA container sudah di-teardown.
 
-**Step 11 — UAT Sign-off: 🔄 Draft siap, menunggu konfirmasi dev (2026-08-26).** Checklist `11_UAT_CHECKLIST.md` sudah ditulis lengkap merekap hasil Step 9/10, termasuk 2 item deviation yang perlu dikonfirmasi paham & diterima dev (`MF-01` observable-outcome baru, `MF-02` fix wajib). **BELUM ditutup** — menunggu konfirmasi eksplisit Kuncoro di chat sebelum sign-off diisi.
+**Step 11 — UAT Sign-off: ✔️ LULUS GATE (2026-08-26).** Kuncoro mengonfirmasi eksplisit di chat ("Ya, UAT selesai — disetujui"), memahami & menerima kedua deviation (`MF-01` format `access_token`, `MF-02` fix `target=inline`) — sign-off dicatat di `11_UAT_CHECKLIST.md`.
 
-**Selanjutnya:** Menunggu jawaban dev untuk menutup Step 11. Kalau disetujui, migrasi `appointment_jitsi` 18.0→19.0 SELESAI PENUH.
+**🎉 MIGRASI `appointment_jitsi` 18.0 → 19.0 SELESAI PENUH — semua 11 step lulus, tidak ada langkah tersisa di project ini.** Branch `migration/19.0_target` sudah berisi 7 commit (Step 1 s/d Step 11), belum di-push ke origin.
+
+**Langkah berikutnya (manual dev, kapan pun siap):**
+1. Review diff branch ini kalau mau: `git log --oneline origin/migration/18.0..migration/19.0_target`
+2. Push branch ke origin secara manual: `git push origin migration/19.0_target`
+3. (Opsional) Buka PR/merge sesuai alur repo Anda — di luar scope AI, sepenuhnya keputusan Anda.
+
+Kalau ada kerja lanjutan (mis. mempromosikan 3 temuan general ke `knowledge/version-diffs/18-to-19.md` lewat sesi curation, atau memperbaiki `MF-01`/F-13 di luar scope bug-for-bug), itu project terpisah, bukan lanjutan dokumen ini.
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja.
 
@@ -132,7 +139,7 @@ Detail lengkap tiap step: `migration-tool/ai-doc/OVERVIEW.md`.
 | 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus gate | ✔️ 2026-08-26, 0 critical |
 | 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus gate | ✔️ 2026-08-26, 13/13 pass |
 | 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ✔️ Lulus gate | ✔️ 2026-08-26, 5/5 skenario |
-| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ⬜ Belum mulai | — |
+| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ✔️ Lulus gate | ✔️ 2026-08-26, Kuncoro sign-off |
 
 Legenda: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis · ✔️ Disetujui/lulus gate.
 
