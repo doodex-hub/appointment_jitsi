@@ -5,7 +5,7 @@
     """,
     "description": """
         Custom Module for Appointment, Integration With Jitsi API.
-        
+
         Features:
         1. **Automatic Link Generation**: When an appointment is created, a unique Jitsi meeting link is generated using the Jitsi API.
         2. **Link Storage**: The generated Jitsi meeting link is stored in a custom field within the appointment record in Odoo.
@@ -30,5 +30,8 @@
     "installable": True,
     "application": False,
     "auto_install": False,
-    "images": ["static/description/banner.png"],
+    "images": [
+       "static/description/banner.gif",
+       "static/description/icon.png",
+    ],
 }
