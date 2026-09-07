@@ -1,3 +1,22 @@
+<!-- ##########################################################################
+  WORK IN PROGRESS -- DO NOT UPLOAD THIS FILE TO THE STORE YET.
+
+  Hardening is partly done. tools/prove_sanitizer.py is the gate, and it still
+  reports FAIL: the sections listed below still keep their design in the STYLE
+  block, which the store deletes.
+
+    DONE  jump nav, trust bar, hero, band 01 (steps + stats), CTA block #1
+          -> the first 2063px of the page are pixel-identical after
+             html_sanitize(strict)
+    TODO  bands 02 Use cases, 03 Features, 04 Why, 05 FAQs, 06 Releases,
+          the two remaining CTA blocks, and the violet interlude / tail blocks
+
+  Uploading now gives the same broken page as before for everything below the
+  first CTA block. Run both checks and get PASS first:
+      python3 tools/check_store_html.py static/description/index.html
+      python3 tools/prove_sanitizer.py  static/description/index.html
+  See "Claude outputs/TODO-2026-09-07.md".
+########################################################################## -->
 <!-- =========================================================================
   Appointment Jitsi -- Odoo Apps Store listing description
   Odoo 17.0 Enterprise - module version 17.0.1.1.0 - Free, LGPL-3 - Doodex
@@ -55,7 +74,7 @@
    request. All three differentiation axes therefore diverge: FSB used hero H-1
    centred, rhythm R-2 soft alternation, and a card-grid features pattern.
 ========================================================================== -->
-<div class="ajb">
+<div class="ajb" style="background-color:#ffffff;color:#525252;font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;font-size:16px;line-height:1.65">
    <style>
       .ajb {
          --violet: #270140;
@@ -86,9 +105,6 @@
             0 12px 32px rgba(39, 1, 64, 0.1), 0 0 0 1px rgba(39, 1, 64, 0.06);
          --cta: 0 8px 22px rgba(250, 114, 104, 0.32);
       }
-      .ajb * {
-         box-sizing: border-box;
-      }
       .ajb {
          background: var(--bg);
          color: var(--ink-3);
@@ -101,8 +117,6 @@
             sans-serif;
          font-size: 16px;
          line-height: 1.65;
-         font-feature-settings: "cv11", "ss01";
-         -webkit-font-smoothing: antialiased;
       }
       .ajb h1,
       .ajb h2,
@@ -1337,196 +1351,216 @@
             margin-right: 0 !important;
          }
       }
+
+      /* ---- hardened blocks: progressive enhancement only ----
+         Everything below is hover state or the mobile collapse. Delete this
+         and the hardened sections are unchanged in substance. */
+      .ajb .jump a:hover { background-color: #ffffff; color: #270140; }
+      .ajb .pbtn { transition: opacity 0.15s ease; }
+      .ajb .pbtn:hover { opacity: 0.9; }
+      @media (max-width: 820px) {
+         .ajb table.lay,
+         .ajb table.lay tbody,
+         .ajb table.lay tr,
+         .ajb table.lay td { display: block !important; width: auto !important; }
+         .ajb table.lay td { border-left-width: 0 !important; }
+         .ajb table.lay td:empty { display: none !important; }
+      }
    </style>
 
-   <!-- ================= JUMP NAV (not sticky, on purpose) ================= -->
-   <div class="ajnav">
-      <div class="ajnav-in">
-         <a class="ajnav-brand" href="#aj-overview"
-            ><img
-               class="ajnav-logo"
-               src="./assets/brand/nav-icon.png"
-               alt="Appointment Jitsi"
-            />Appointment <span>Jitsi</span></a
-         >
-         <nav class="ajtabs">
-            <a href="#aj-overview">Overview</a>
-            <a href="#aj-usecases">Use cases</a>
-            <a href="#aj-features">Features</a>
-            <a href="#aj-why">Why</a>
-            <a href="#aj-faqs">FAQs</a>
-            <a href="#aj-releases">Releases</a>
-         </nav>
-         <div class="ajnav-cta">
-            <a class="ajbtn ajbtn-1" href="#aj-talk">Talk to Doodex</a>
+   <!-- ================= JUMP NAV (not sticky, on purpose) =================
+  HARDENED. No class carries layout any more. The band that spans the page
+  holds the 24px inset; the element inside it holds the 1032px width. Never
+  both on one element - box-sizing is not on Odoo's whitelist.
+======================================================================= -->
+   <div style="background-color:#ffffff;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#ece4f3">
+      <div style="padding-left:24px;padding-right:24px">
+         <table class="lay" style="width:100%;max-width:1032px;margin-left:auto;margin-right:auto;border-collapse:collapse"><tbody><tr>
+            <td style="vertical-align:middle;text-align:left;padding-top:10px;padding-bottom:10px">
+               <a href="#aj-overview" style="color:#270140;font-weight:800;font-size:15px;letter-spacing:-0.01em;text-decoration:none"><img
+                  src="./assets/brand/nav-icon.png"
+                  alt="Appointment Jitsi"
+                  width="26" height="26"
+                  style="display:inline-block;vertical-align:middle;width:26px;height:26px;border-radius:7px;margin-right:7px">Appointment Jitsi</a>
+            </td>
+            <td style="vertical-align:middle;text-align:center;padding-top:10px;padding-bottom:10px">
+               <span class="jump" style="display:inline-block;background-color:#faf7fc;border-width:1px;border-style:solid;border-color:#ece4f3;border-radius:9999px;padding:4px"
+                  ><a href="#aj-overview" style="display:inline-block;text-decoration:none;color:#171717;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:9999px;white-space:nowrap">Overview</a
+                  ><a href="#aj-usecases" style="display:inline-block;text-decoration:none;color:#171717;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:9999px;white-space:nowrap">Use cases</a
+                  ><a href="#aj-features" style="display:inline-block;text-decoration:none;color:#171717;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:9999px;white-space:nowrap">Features</a
+                  ><a href="#aj-why" style="display:inline-block;text-decoration:none;color:#171717;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:9999px;white-space:nowrap">Why</a
+                  ><a href="#aj-faqs" style="display:inline-block;text-decoration:none;color:#171717;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:9999px;white-space:nowrap">FAQs</a
+                  ><a href="#aj-releases" style="display:inline-block;text-decoration:none;color:#171717;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:9999px;white-space:nowrap">Releases</a
+               ></span>
+            </td>
+            <td style="vertical-align:middle;text-align:right;padding-top:10px;padding-bottom:10px">
+               <a class="pbtn" href="#aj-talk" style="display:inline-block;background-color:#fa7268;color:#ffffff;font-weight:700;font-size:13.5px;text-decoration:none;padding:9px 17px;border-radius:10px">Talk to Doodex</a>
+            </td>
+         </tr></tbody></table>
+      </div>
+   </div>
+
+   <!-- ================= TRUST BAR (factual chips, no superlatives) =================
+  The chips were a flex row with gap:10px 26px. They are inline-block spans
+  with margins now - a table would be wrong here, the row is meant to wrap.
+============================================================================== -->
+   <div style="background-color:#270140">
+      <div style="padding:14px 24px">
+         <div style="max-width:1032px;margin-left:auto;margin-right:auto">
+            <span style="display:inline-block;vertical-align:middle;font-size:12.5px;font-weight:600;color:#ffffff;margin-right:26px;margin-top:5px;margin-bottom:5px"><img
+               src="./assets/icons/ic-check-c.png" alt="" width="16" height="16"
+               style="display:inline-block;vertical-align:middle;width:16px;height:16px;margin-right:8px">Odoo 17.0 Enterprise</span
+            ><span style="display:inline-block;vertical-align:middle;font-size:12.5px;font-weight:600;color:#ffffff;margin-right:26px;margin-top:5px;margin-bottom:5px"><img
+               src="./assets/icons/ic-tag-c.png" alt="" width="16" height="16"
+               style="display:inline-block;vertical-align:middle;width:16px;height:16px;margin-right:8px">Free &middot; LGPL-3</span
+            ><span style="display:inline-block;vertical-align:middle;font-size:12.5px;font-weight:600;color:#ffffff;margin-right:26px;margin-top:5px;margin-bottom:5px"><img
+               src="./assets/icons/ic-code-c.png" alt="" width="16" height="16"
+               style="display:inline-block;vertical-align:middle;width:16px;height:16px;margin-right:8px">13 automated tests, all passing</span
+            ><span style="display:inline-block;vertical-align:middle;font-size:12.5px;font-weight:600;color:#ffffff;margin-right:26px;margin-top:5px;margin-bottom:5px"><img
+               src="./assets/icons/ic-database-c.png" alt="" width="16" height="16"
+               style="display:inline-block;vertical-align:middle;width:16px;height:16px;margin-right:8px">2 fields added, 0 new models</span
+            ><span style="display:inline-block;vertical-align:middle;font-size:12.5px;font-weight:600;color:#ffffff;margin-top:5px;margin-bottom:5px"><img
+               src="./assets/icons/ic-support-c.png" alt="" width="16" height="16"
+               style="display:inline-block;vertical-align:middle;width:16px;height:16px;margin-right:8px">Published and supported by Doodex</span>
          </div>
       </div>
    </div>
 
-   <!-- ================= TRUST BAR (factual chips, no superlatives) ================= -->
-   <div class="ajtrust">
-      <div class="ajtrust-in">
-         <span class="ajtrust-i"
-            ><img
-               class="ajic ajic-16"
-               src="./assets/icons/ic-check-c.png"
-               alt=""
-            />Odoo 17.0 Enterprise</span
-         >
-         <span class="ajtrust-i"
-            ><img
-               class="ajic ajic-16"
-               src="./assets/icons/ic-tag-c.png"
-               alt=""
-            />Free &middot; LGPL-3</span
-         >
-         <span class="ajtrust-i"
-            ><img
-               class="ajic ajic-16"
-               src="./assets/icons/ic-code-c.png"
-               alt=""
-            />13 automated tests, all passing</span
-         >
-         <span class="ajtrust-i"
-            ><img
-               class="ajic ajic-16"
-               src="./assets/icons/ic-database-c.png"
-               alt=""
-            />2 fields added, 0 new models</span
-         >
-         <span class="ajtrust-i"
-            ><img
-               class="ajic ajic-16"
-               src="./assets/icons/ic-support-c.png"
-               alt=""
-            />Published and supported by Doodex</span
-         >
-      </div>
-   </div>
-
-   <!-- ================= HERO -- variant H-2, text / visual split ================= -->
-   <section class="ajsec">
-      <div class="ajwrap">
-         <div class="ajhero">
-            <div class="ajhero-txt">
-               <p class="ajeyebrow">
+   <!-- ================= HERO -- variant H-2, text / visual split =================
+  The 1.02fr / 0.98fr grid with gap:44px is a fixed table: 504 + 44 spacer +
+  484 = 1032. The spacer TD is empty on purpose and the style block hides it
+  on mobile. Type is clamp(), not @media - a media query cannot be inlined.
+  The shot lost overflow:hidden and box-shadow: the radius sits on the IMG
+  itself now and the shadow is the hairline border the whitelist allows.
+============================================================================= -->
+   <div style="padding-top:56px;padding-bottom:56px">
+      <div style="padding-left:24px;padding-right:24px">
+         <table class="lay" style="width:100%;max-width:1032px;margin-left:auto;margin-right:auto;border-collapse:collapse"><tbody><tr>
+            <td style="width:504px;vertical-align:middle">
+               <p style="display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#e85c52;margin:0 0 14px">
                   Odoo Jitsi integration &middot; Calendar &amp; Appointment
                   &middot; v17.0.1.1.0
                </p>
-               <h1 class="ajh1" style="margin-bottom: 18px">
+               <h1 style="font-size:clamp(34px, 3.6vw, 44px);font-weight:800;line-height:1.08;letter-spacing:-0.015em;color:#270140;margin:0 0 18px">
                   Every Odoo appointment gets its own Jitsi&nbsp;Meet room.
                </h1>
-               <p class="ajlead">
+               <p style="font-size:18.5px;line-height:1.6;color:#525252;margin:0 0 14px">
                   Your team meets in Jitsi, but Odoo keeps sending Discuss links
                   &mdash; so someone pastes the real one in by hand. Tick one
                   box and every Odoo appointment and calendar event arrives with
-                  <span class="ajmark">its own Jitsi Meet room</span>.
+                  <span style="color:#e85c52;font-weight:700">its own Jitsi Meet room</span>.
                </p>
-               <div class="ajbtn-row" style="margin-top: 26px">
-                  <a class="ajbtn ajbtn-1" href="#aj-features"
-                     >See the 8 features</a
-                  >
-                  <a class="ajbtn ajbtn-2" href="#aj-why"
-                     >Why not Odoo's own call?</a
-                  >
-               </div>
-               <p class="ajxs ajmut" style="margin-top: 16px">
+               <p style="margin:26px 0 0">
+                  <a class="pbtn" href="#aj-features" style="display:inline-block;background-color:#fa7268;color:#ffffff;font-weight:700;font-size:15px;text-decoration:none;padding:13px 24px;border-radius:10px;margin-right:12px;margin-bottom:12px">See the 8 features</a
+                  ><a class="pbtn" href="#aj-why" style="display:inline-block;background-color:#ffffff;color:#270140;font-weight:700;font-size:15px;text-decoration:none;padding:13px 24px;border-radius:10px;border-width:1.5px;border-style:solid;border-color:#270140;margin-bottom:12px">Why not Odoo's own call?</a>
+               </p>
+               <p style="font-size:12.5px;color:#737373;margin:16px 0 0">
                   Free, LGPL-3. No account, no key, no subscription to install
                   it.
                </p>
-            </div>
-            <div class="ajhero-shot">
+            </td>
+            <td style="width:44px"></td>
+            <td style="width:484px;vertical-align:middle">
                <img
                   src="./assets/gifs/hero-jitsi-journey.gif"
                   alt="Recorded on a live Odoo 17: the Jitsi Configuration setting switched off, then ticked with Company set to Doodex, the meet.jit.si room address it generated, and that same room open on meet.jit.si showing the Odoo token as its name."
                   width="968"
                   height="310"
-                  style="max-width: 100%; height: auto"
+                  style="display:block;width:100%;max-width:100%;height:auto;border-radius:14px;border-width:1px;border-style:solid;border-color:#f2f0f4"
                />
-            </div>
-         </div>
-      </div>
-   </section>
-
-   <!-- ================= BAND 01 -- OVERVIEW ================= -->
-   <div class="ajband">
-      <div class="ajband-in" id="aj-overview">
-         <span class="ajband-n">01<span style="opacity: 0.55">/06</span></span>
-         <span class="ajband-l">Overview</span>
-         <span class="ajband-r"></span>
-         <span class="ajband-x">What it changes in your Odoo</span>
+            </td>
+         </tr></tbody></table>
       </div>
    </div>
 
-   <section class="ajsec">
-      <div class="ajwrap">
-         <div class="ajnarrow ajctr" style="margin-bottom: 36px">
-            <p class="ajeyebrow">Three clicks, then never again</p>
-            <h2 class="ajh2" style="margin-bottom: 12px">
-               Set it up once. Every meeting after that is already a Jitsi room.
-            </h2>
-            <p class="ajlead">
-               There is nothing to learn and nothing to remember. The module
-               hooks into the fields Odoo already uses for video calls, so your
-               team keeps clicking the same Join button they click today &mdash;
-               it simply opens somewhere else.
-            </p>
-         </div>
+   <!-- ================= BAND 01 -- OVERVIEW =================
+  The rail used flex:1 to eat the slack. In an auto table a cell with
+  width:100% does the same. The 1px line is a DIV inside the cell, not a
+  border on it: a collapsed cell border paints over its own content.
+======================================================================= -->
+   <div id="aj-overview" style="background-color:#270140">
+      <div style="padding:13px 24px">
+         <table class="lay" style="width:100%;max-width:1032px;margin-left:auto;margin-right:auto;border-collapse:collapse"><tbody><tr>
+            <td style="vertical-align:middle;white-space:nowrap;padding-right:16px;font-size:13px;font-weight:800;color:#fa7268;letter-spacing:0.06em">01<span style="color:#a8544e">/06</span></td>
+            <td style="vertical-align:middle;white-space:nowrap;padding-right:16px;font-size:12.5px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;color:#ffffff">Overview</td>
+            <td style="width:100%;vertical-align:middle;padding-right:16px"><div style="height:1px;background-color:#523466"></div></td>
+            <td style="vertical-align:middle;white-space:nowrap;font-size:12px;color:#9e8da9">What it changes in your Odoo</td>
+         </tr></tbody></table>
+      </div>
+   </div>
 
-         <div class="ajsteps">
-            <div class="ajstep">
-               <span class="ajstep-n">1</span>
-               <h3>Tick the box</h3>
-               <p>
-                  Settings &rarr; Calendar. Switch on
-                  <b>Jitsi Configuration</b>, choose which company name the
-                  rooms are named after, and save.
+   <div style="padding-top:56px;padding-bottom:56px">
+      <div style="padding-left:24px;padding-right:24px">
+         <div style="max-width:1032px;margin-left:auto;margin-right:auto">
+            <div style="max-width:820px;margin-left:auto;margin-right:auto;text-align:center;margin-bottom:36px">
+               <p style="display:inline-block;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#e85c52;margin:0 0 14px">Three clicks, then never again</p>
+               <h2 style="font-size:27px;font-weight:800;line-height:1.22;letter-spacing:-0.015em;color:#270140;margin:0 0 12px">
+                  Set it up once. Every meeting after that is already a Jitsi room.
+               </h2>
+               <p style="font-size:18.5px;line-height:1.6;color:#525252;margin:0">
+                  There is nothing to learn and nothing to remember. The module
+                  hooks into the fields Odoo already uses for video calls, so your
+                  team keeps clicking the same Join button they click today &mdash;
+                  it simply opens somewhere else.
                </p>
             </div>
-            <div class="ajstep">
-               <span class="ajstep-n">2</span>
-               <h3>Book as usual</h3>
-               <p>
-                  Create a meeting, or let a visitor book a slot on your
-                  website. Nothing about the booking flow changes for you or for
-                  them.
-               </p>
-            </div>
-            <div class="ajstep">
-               <span class="ajstep-n">3</span>
-               <h3>The room is already there</h3>
-               <p>
-                  A unique Jitsi Meet address lands in the event, on the Join
-                  button, and in the confirmation e-mail. Nobody pastes
-                  anything.
-               </p>
-            </div>
-         </div>
 
-         <div class="ajstats">
-            <div class="ajstat">
-               <div class="n">3</div>
-               <div class="l">clicks to configure,<br />once per database</div>
+            <!-- three steps: equal columns from table-layout:fixed, the divider
+                 is a border-left on the 2nd and 3rd cell (never on the 1st, it
+                 would double up with the container's own border) -->
+            <div style="border-width:1px;border-style:solid;border-color:#ece4f3;border-radius:14px;background-color:#ffffff">
+               <table class="lay" style="width:100%;table-layout:fixed;border-collapse:collapse"><tbody><tr>
+                  <td style="vertical-align:top;padding:24px 22px">
+                     <span style="display:inline-block;text-align:center;width:26px;height:26px;line-height:26px;border-radius:8px;background-color:#270140;color:#ffffff;font-size:12.5px;font-weight:800;margin-bottom:12px">1</span>
+                     <h3 style="font-size:16px;font-weight:700;letter-spacing:-0.015em;color:#270140;margin:0 0 6px">Tick the box</h3>
+                     <p style="font-size:13.5px;color:#737373;margin:0">
+                        Settings &rarr; Calendar. Switch on
+                        <b>Jitsi Configuration</b>, choose which company name the
+                        rooms are named after, and save.
+                     </p>
+                  </td>
+                  <td style="vertical-align:top;padding:24px 22px;border-left-width:1px;border-left-style:solid;border-left-color:#ece4f3">
+                     <span style="display:inline-block;text-align:center;width:26px;height:26px;line-height:26px;border-radius:8px;background-color:#270140;color:#ffffff;font-size:12.5px;font-weight:800;margin-bottom:12px">2</span>
+                     <h3 style="font-size:16px;font-weight:700;letter-spacing:-0.015em;color:#270140;margin:0 0 6px">Book as usual</h3>
+                     <p style="font-size:13.5px;color:#737373;margin:0">
+                        Create a meeting, or let a visitor book a slot on your
+                        website. Nothing about the booking flow changes for you or for
+                        them.
+                     </p>
+                  </td>
+                  <td style="vertical-align:top;padding:24px 22px;border-left-width:1px;border-left-style:solid;border-left-color:#ece4f3">
+                     <span style="display:inline-block;text-align:center;width:26px;height:26px;line-height:26px;border-radius:8px;background-color:#270140;color:#ffffff;font-size:12.5px;font-weight:800;margin-bottom:12px">3</span>
+                     <h3 style="font-size:16px;font-weight:700;letter-spacing:-0.015em;color:#270140;margin:0 0 6px">The room is already there</h3>
+                     <p style="font-size:13.5px;color:#737373;margin:0">
+                        A unique Jitsi Meet address lands in the event, on the Join
+                        button, and in the confirmation e-mail. Nobody pastes
+                        anything.
+                     </p>
+                  </td>
+               </tr></tbody></table>
             </div>
-            <div class="ajstat">
-               <div class="n">32</div>
-               <div class="l">
-                  character random token,<br />a new one per meeting
-               </div>
-            </div>
-            <div class="ajstat">
-               <div class="n">0</div>
-               <div class="l">
-                  new models, 0 new<br />access rules, 2 fields
-               </div>
-            </div>
-            <div class="ajstat">
-               <div class="n">&euro;0</div>
-               <div class="l">to buy, to renew,<br />and per user</div>
-            </div>
+
+            <table class="lay" style="width:100%;table-layout:fixed;border-collapse:collapse;margin-top:28px;text-align:center"><tbody><tr>
+               <td style="vertical-align:top;padding:18px 12px">
+                  <div style="font-size:32px;font-weight:800;color:#270140;letter-spacing:-0.03em;line-height:1.1">3</div>
+                  <div style="font-size:12.5px;color:#737373;line-height:1.4">clicks to configure,<br />once per database</div>
+               </td>
+               <td style="vertical-align:top;padding:18px 12px;border-left-width:1px;border-left-style:solid;border-left-color:#ece4f3">
+                  <div style="font-size:32px;font-weight:800;color:#270140;letter-spacing:-0.03em;line-height:1.1">32</div>
+                  <div style="font-size:12.5px;color:#737373;line-height:1.4">character random token,<br />a new one per meeting</div>
+               </td>
+               <td style="vertical-align:top;padding:18px 12px;border-left-width:1px;border-left-style:solid;border-left-color:#ece4f3">
+                  <div style="font-size:32px;font-weight:800;color:#270140;letter-spacing:-0.03em;line-height:1.1">0</div>
+                  <div style="font-size:12.5px;color:#737373;line-height:1.4">new models, 0 new<br />access rules, 2 fields</div>
+               </td>
+               <td style="vertical-align:top;padding:18px 12px;border-left-width:1px;border-left-style:solid;border-left-color:#ece4f3">
+                  <div style="font-size:32px;font-weight:800;color:#270140;letter-spacing:-0.03em;line-height:1.1">&euro;0</div>
+                  <div style="font-size:12.5px;color:#737373;line-height:1.4">to buy, to renew,<br />and per user</div>
+               </td>
+            </tr></tbody></table>
          </div>
       </div>
-   </section>
+   </div>
 
    <!-- violet interlude -- the R-3 rhythm marker -->
    <!-- ============ INSTANT DEMO / CONTACT -- closes the Overview band ==============
@@ -1536,113 +1570,94 @@
     * the booking and WhatsApp cards carry NO href -- their URL is printed as
       visible text and encoded in the QR PNG beside it
   This is the naked-link pattern. Do not "helpfully" add an href here.
+  HARDENED by tools/qrblock.py - see that file for the grid->table reasoning.
 ================================================================================= -->
-   <section class="ajsec">
-      <div class="ajwrap">
-         <div class="ajqr">
-            <div class="ajqr-h">
-               <p class="ajqr-eye">Before you install anything</p>
-               <h2 class="ajqr-t">
+   <div style="padding-top:56px;padding-bottom:56px">
+      <div style="padding-left:24px;padding-right:24px">
+         <div style="max-width:1032px;margin-left:auto;margin-right:auto">
+            <div style="background-color:#270140;border-radius:20px;padding:28px 30px 24px">
+            <div style="max-width:640px">
+               <p style="font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#fa7268;margin:0 0 8px">Before you install anything</p>
+               <h2 style="color:#ffffff;font-size:23px;font-weight:800;letter-spacing:-0.015em;margin:0 0 8px">
                   Ask us whether it fits your Odoo &mdash; it takes one question
                </h2>
-               <p class="ajqr-s">
+               <p style="color:#cbc2d1;font-size:14.5px;line-height:1.55;margin:0">
                   Not sure if your edition qualifies, or whether you should
                   point the rooms at your own Jitsi server? Ask. A real person
                   at Doodex answers, and the answer is free either way.
                </p>
             </div>
-            <div class="ajqr-g">
-               <div class="ajqr-c ajqr-lead">
-                  <div class="ajqr-top">
-                     <span class="ajqr-ico"
-                        ><img
-                           class="ajic ajic-18"
-                           src="./assets/icons/ic-video-w.png"
-                           alt=""
-                     /></span>
-                     <span class="ajqr-tag hot">30 minutes</span>
-                  </div>
-                  <h3 class="ajqr-ch">Book a live walkthrough</h3>
-                  <p class="ajqr-cp">
-                     We install it on a demo Odoo 17 in front of you and book a
-                     meeting end to end.
-                  </p>
-                  <a
-                     class="ajqr-code"
-                     aria-label="Book a live walkthrough with Doodex"
-                     ><img
-                        src="./assets/icons/qr-meeting.png"
-                        alt="QR code for hub.doodex.net/r/meeting"
-                        width="98"
-                        height="98"
-                  /></a>
-                  <a class="ajbtn ajbtn-1 ajqr-b"
-                     >hub.doodex.net<wbr />/r/meeting</a
-                  >
-               </div>
-               <div class="ajqr-c">
-                  <div class="ajqr-top">
-                     <span class="ajqr-ico"
-                        ><img
-                           class="ajic ajic-18"
-                           src="./assets/icons/ic-mail-w.png"
-                           alt=""
-                     /></span>
-                     <span class="ajqr-tag">Written reply</span>
-                  </div>
-                  <h3 class="ajqr-ch">Send one question</h3>
-                  <p class="ajqr-cp">
-                     Put it in writing and we reply by e-mail, in English or
-                     French.
-                  </p>
-                  <a
-                     class="ajqr-code"
-                     href="mailto:odoo@doodex.net"
-                     aria-label="E-mail odoo@doodex.net"
-                     ><img
-                        src="./assets/icons/qr-mail.png"
-                        alt="QR code for odoo@doodex.net"
-                        width="98"
-                        height="98"
-                  /></a>
-                  <a class="ajbtn ajbtn-2 ajqr-b" href="mailto:odoo@doodex.net"
-                     >odoo@doodex.net</a
-                  >
-               </div>
-               <div class="ajqr-c">
-                  <div class="ajqr-top">
-                     <span class="ajqr-ico"
-                        ><img
-                           class="ajic ajic-18"
-                           src="./assets/icons/ic-phone-w.png"
-                           alt=""
-                     /></span>
-                     <span class="ajqr-tag">Fastest reply</span>
-                  </div>
-                  <h3 class="ajqr-ch">Message us on WhatsApp</h3>
-                  <p class="ajqr-cp">
-                     Reach the Odoo team at Doodex directly on +62
-                     821-3120-5030.
-                  </p>
-                  <a class="ajqr-code" aria-label="Message Doodex on WhatsApp"
-                     ><img
-                        src="./assets/icons/qr-whatsapp.png"
-                        alt="QR code for hub.doodex.net/r/whatsapp"
-                        width="98"
-                        height="98"
-                  /></a>
-                  <a class="ajbtn ajbtn-2 ajqr-b"
-                     >hub.doodex.net<wbr />/r/whatsapp</a
-                  >
-               </div>
-            </div>
-            <p class="ajqr-f">
+            <table class="lay" style="width:100%;table-layout:fixed;border-collapse:collapse;margin-top:24px"><tbody><tr>
+               <td style="width:32.37311%;vertical-align:top;background-color:#ffffff;border-radius:14px;border-width:2px;border-style:solid;border-color:#fa7268">
+                  <table style="width:100%;height:100%;border-collapse:collapse"><tbody>
+                     <tr><td style="vertical-align:top;padding:16px 16px 0">
+                        <table style="width:100%;border-collapse:collapse"><tbody><tr>
+                           <td style="vertical-align:middle;text-align:left"><span style="display:inline-block;text-align:center;width:30px;height:30px;line-height:30px;border-radius:9px;background-color:#270140"><img
+                              src="./assets/icons/ic-video-w.png" alt="" width="18" height="18"
+                              style="display:inline-block;vertical-align:middle;width:18px;height:18px"></span></td>
+                           <td style="vertical-align:middle;text-align:right"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;background-color:#fa7268;color:#ffffff;padding:4px 9px;border-radius:9999px">30 minutes</span></td>
+                        </tr></tbody></table>
+                        <h3 style="font-size:15.5px;font-weight:700;letter-spacing:-0.015em;color:#270140;margin:1px 0 0">Book a live walkthrough</h3>
+                        <p style="font-size:12.5px;line-height:1.5;color:#737373;margin:9px 0 0">We install it on a demo Odoo 17 in front of you and book a
+                           meeting end to end.</p>
+                     </td></tr>
+                     <tr><td style="vertical-align:bottom;padding:9px 16px 16px">
+                        <a aria-label="Book a live walkthrough with Doodex" style="display:block;background-color:#faf7fc;border-radius:10px;padding:10px;text-decoration:none"><img
+                           src="./assets/icons/qr-meeting.png" alt="QR code for hub.doodex.net/r/meeting" width="98" height="98" style="display:block;width:98px;max-width:100%;height:auto;margin-left:auto;margin-right:auto"></a>
+                        <div style="height:9px"></div>
+                        <a class="pbtn" style="display:block;background-color:#fa7268;color:#ffffff;font-weight:700;font-size:13px;text-decoration:none;padding:10px;border-radius:10px;text-align:center">hub.doodex.net<wbr />/r/meeting</a>
+                     </td></tr>
+                  </tbody></table>
+               </td><td style="width:1.44033%"></td><td style="width:32.37311%;vertical-align:top;background-color:#ffffff;border-radius:14px">
+                  <table style="width:100%;height:100%;border-collapse:collapse"><tbody>
+                     <tr><td style="vertical-align:top;padding:16px 16px 0">
+                        <table style="width:100%;border-collapse:collapse"><tbody><tr>
+                           <td style="vertical-align:middle;text-align:left"><span style="display:inline-block;text-align:center;width:30px;height:30px;line-height:30px;border-radius:9px;background-color:#270140"><img
+                              src="./assets/icons/ic-mail-w.png" alt="" width="18" height="18"
+                              style="display:inline-block;vertical-align:middle;width:18px;height:18px"></span></td>
+                           <td style="vertical-align:middle;text-align:right"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;background-color:#f4eef8;color:#270140;padding:4px 9px;border-radius:9999px">Written reply</span></td>
+                        </tr></tbody></table>
+                        <h3 style="font-size:15.5px;font-weight:700;letter-spacing:-0.015em;color:#270140;margin:1px 0 0">Send one question</h3>
+                        <p style="font-size:12.5px;line-height:1.5;color:#737373;margin:9px 0 0">Put it in writing and we reply by e-mail, in English or
+                           French.</p>
+                     </td></tr>
+                     <tr><td style="vertical-align:bottom;padding:9px 16px 16px">
+                        <a href="mailto:odoo@doodex.net" aria-label="E-mail odoo@doodex.net" style="display:block;background-color:#faf7fc;border-radius:10px;padding:10px;text-decoration:none"><img
+                           src="./assets/icons/qr-mail.png" alt="QR code for odoo@doodex.net" width="98" height="98" style="display:block;width:98px;max-width:100%;height:auto;margin-left:auto;margin-right:auto"></a>
+                        <div style="height:9px"></div>
+                        <a class="pbtn" href="mailto:odoo@doodex.net" style="display:block;background-color:#ffffff;color:#270140;border-width:1.5px;border-style:solid;border-color:#270140;font-weight:700;font-size:13px;text-decoration:none;padding:10px;border-radius:10px;text-align:center">odoo@doodex.net</a>
+                     </td></tr>
+                  </tbody></table>
+               </td><td style="width:1.44033%"></td><td style="width:32.37311%;vertical-align:top;background-color:#ffffff;border-radius:14px">
+                  <table style="width:100%;height:100%;border-collapse:collapse"><tbody>
+                     <tr><td style="vertical-align:top;padding:16px 16px 0">
+                        <table style="width:100%;border-collapse:collapse"><tbody><tr>
+                           <td style="vertical-align:middle;text-align:left"><span style="display:inline-block;text-align:center;width:30px;height:30px;line-height:30px;border-radius:9px;background-color:#270140"><img
+                              src="./assets/icons/ic-phone-w.png" alt="" width="18" height="18"
+                              style="display:inline-block;vertical-align:middle;width:18px;height:18px"></span></td>
+                           <td style="vertical-align:middle;text-align:right"><span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;background-color:#f4eef8;color:#270140;padding:4px 9px;border-radius:9999px">Fastest reply</span></td>
+                        </tr></tbody></table>
+                        <h3 style="font-size:15.5px;font-weight:700;letter-spacing:-0.015em;color:#270140;margin:1px 0 0">Message us on WhatsApp</h3>
+                        <p style="font-size:12.5px;line-height:1.5;color:#737373;margin:9px 0 0">Reach the Odoo team at Doodex directly on +62
+                           821-3120-5030.</p>
+                     </td></tr>
+                     <tr><td style="vertical-align:bottom;padding:9px 16px 16px">
+                        <a aria-label="Message Doodex on WhatsApp" style="display:block;background-color:#faf7fc;border-radius:10px;padding:10px;text-decoration:none"><img
+                           src="./assets/icons/qr-whatsapp.png" alt="QR code for hub.doodex.net/r/whatsapp" width="98" height="98" style="display:block;width:98px;max-width:100%;height:auto;margin-left:auto;margin-right:auto"></a>
+                        <div style="height:9px"></div>
+                        <a class="pbtn" style="display:block;background-color:#ffffff;color:#270140;border-width:1.5px;border-style:solid;border-color:#270140;font-weight:700;font-size:13px;text-decoration:none;padding:10px;border-radius:10px;text-align:center">hub.doodex.net<wbr />/r/whatsapp</a>
+                     </td></tr>
+                  </tbody></table>
+               </td>
+            </tr></tbody></table>
+            <p style="color:#9785a3;font-size:12px;margin:16px 0 0">
                Scan a code with your phone, or type the address next to it
                &mdash; both reach the same place.
             </p>
          </div>
+         </div>
       </div>
-   </section>
+   </div>
 
    <section class="ajsec-t ajband-tail">
       <div class="ajwrap">
@@ -1688,11 +1703,10 @@
             <div class="ajuc-i">
                <div class="ajuc-top">
                   <span class="ajuc-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-spark-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajuc-w">Sales</span>
                </div>
                <h3>Discovery calls that start on time</h3>
@@ -1712,11 +1726,10 @@
             <div class="ajuc-i">
                <div class="ajuc-top">
                   <span class="ajuc-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-support-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajuc-w">Support</span>
                </div>
                <h3>Screen sharing with customers who have no login</h3>
@@ -1735,11 +1748,10 @@
             <div class="ajuc-i">
                <div class="ajuc-top">
                   <span class="ajuc-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-users-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajuc-w">Recruitment</span>
                </div>
                <h3>Interviews candidates can join from a train</h3>
@@ -1759,11 +1771,10 @@
             <div class="ajuc-i">
                <div class="ajuc-top">
                   <span class="ajuc-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-clock-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajuc-w">Professional services</span>
                </div>
                <h3>Paid consultations, room included</h3>
@@ -1782,11 +1793,10 @@
             <div class="ajuc-i">
                <div class="ajuc-top">
                   <span class="ajuc-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-refresh-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajuc-w">Internal</span>
                </div>
                <h3>Recurring meetings without the recycled link</h3>
@@ -1805,11 +1815,10 @@
             <div class="ajuc-i ajuc-end">
                <div class="ajuc-top">
                   <span class="ajuc-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-arrow-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajuc-w">Yours not listed?</span>
                </div>
                <h3>If it books through Odoo, it is covered</h3>
@@ -1859,11 +1868,10 @@
             <div class="ajfl-i">
                <div class="ajfl-rail">
                   <span class="ajfl-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-sliders-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajfl-n">01</span>
                </div>
                <div class="ajfl-b">
@@ -1897,11 +1905,10 @@
             <div class="ajfl-i">
                <div class="ajfl-rail">
                   <span class="ajfl-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-link-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajfl-n">02</span>
                </div>
                <div class="ajfl-b">
@@ -1938,11 +1945,10 @@
             <div class="ajfl-i">
                <div class="ajfl-rail">
                   <span class="ajfl-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-video-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajfl-n">03</span>
                </div>
                <div class="ajfl-b">
@@ -1978,11 +1984,10 @@
             <div class="ajfl-i">
                <div class="ajfl-rail">
                   <span class="ajfl-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-mail-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajfl-n">04</span>
                </div>
                <div class="ajfl-b">
@@ -2024,11 +2029,10 @@
             <div class="ajfl-i">
                <div class="ajfl-rail">
                   <span class="ajfl-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-calendar-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajfl-n">05</span>
                </div>
                <div class="ajfl-b">
@@ -2076,11 +2080,10 @@
             <div class="ajfl-i">
                <div class="ajfl-rail">
                   <span class="ajfl-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-code-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajfl-n">06</span>
                </div>
                <div class="ajfl-b">
@@ -2106,11 +2109,10 @@
             <div class="ajfl-i">
                <div class="ajfl-rail">
                   <span class="ajfl-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-refresh-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajfl-n">07</span>
                </div>
                <div class="ajfl-b">
@@ -2126,11 +2128,10 @@
             <div class="ajfl-i">
                <div class="ajfl-rail">
                   <span class="ajfl-ico"
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:22px;height:22px"
                         class="ajic ajic-22"
                         src="./assets/icons/ic-shield-w.png"
-                        alt=""
-                  /></span>
+                        alt="" width="22" height="22"></span>
                   <span class="ajfl-n">08</span>
                </div>
                <div class="ajfl-b">
@@ -2247,22 +2248,20 @@
 
          <div class="ajreq">
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-tag-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Version</p>
                   <p class="v">Odoo 17.0 only. Module version 17.0.1.1.0.</p>
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-alert-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Edition</p>
                   <p class="v">
@@ -2272,11 +2271,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-code-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Depends on</p>
                   <p class="v">
@@ -2286,11 +2284,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-tag-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Licence &amp; price</p>
                   <p class="v">
@@ -2299,11 +2296,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-install-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Install</p>
                   <p class="v">
@@ -2313,11 +2309,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-sliders-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Configuration</p>
                   <p class="v">
@@ -2326,11 +2321,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-globe-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Video service</p>
                   <p class="v">
@@ -2340,11 +2334,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-lock-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Moderator sign-in</p>
                   <p class="v">
@@ -2357,11 +2350,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-server-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Own Jitsi server &mdash; limit</p>
                   <p class="v">
@@ -2372,11 +2364,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-users-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Multi-company &mdash; limit</p>
                   <p class="v">
@@ -2387,11 +2378,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-database-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Your data</p>
                   <p class="v">
@@ -2401,11 +2391,10 @@
                </div>
             </div>
             <div class="ajreq-i">
-               <img
+               <img style="display:inline-block;vertical-align:middle;width:20px;height:20px"
                   class="ajic ajic-20"
                   src="./assets/icons/ic-mobile-c.png"
-                  alt=""
-               />
+                  alt="" width="20" height="20">
                <div>
                   <p class="t">Mobile</p>
                   <p class="v">
@@ -2450,11 +2439,10 @@
             <div class="r">
                <div class="no">
                   <b
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:16px;height:16px"
                         class="ajic ajic-16"
                         src="./assets/icons/ic-cross-r.png"
-                        alt=""
-                     />Two video products, depending on where the meeting was
+                        alt="" width="16" height="16">Two video products, depending on where the meeting was
                      booked</b
                   >
                   <p>
@@ -2464,11 +2452,10 @@
                </div>
                <div class="yes">
                   <b
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:16px;height:16px"
                         class="ajic ajic-16"
                         src="./assets/icons/ic-check-g.png"
-                        alt=""
-                     />One room, whatever created the meeting</b
+                        alt="" width="16" height="16">One room, whatever created the meeting</b
                   >
                   <p>
                      Website booking, internal calendar entry, recurring
@@ -2480,11 +2467,10 @@
             <div class="r">
                <div class="no">
                   <b
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:16px;height:16px"
                         class="ajic ajic-16"
                         src="./assets/icons/ic-cross-r.png"
-                        alt=""
-                     />Guests join Odoo Discuss in a browser tab</b
+                        alt="" width="16" height="16">Guests join Odoo Discuss in a browser tab</b
                   >
                   <p>
                      Your guest is not going to install the Odoo app to take one
@@ -2494,11 +2480,10 @@
                </div>
                <div class="yes">
                   <b
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:16px;height:16px"
                         class="ajic ajic-16"
                         src="./assets/icons/ic-check-g.png"
-                        alt=""
-                     />Guests join in the Jitsi Meet app</b
+                        alt="" width="16" height="16">Guests join in the Jitsi Meet app</b
                   >
                   <p>
                      Jitsi Meet is a free native app on iOS and Android. The
@@ -2509,11 +2494,10 @@
             <div class="r">
                <div class="no">
                   <b
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:16px;height:16px"
                         class="ajic ajic-16"
                         src="./assets/icons/ic-cross-r.png"
-                        alt=""
-                     />The video runs on your Odoo server, whether you planned
+                        alt="" width="16" height="16">The video runs on your Odoo server, whether you planned
                      that or not</b
                   >
                   <p>
@@ -2523,11 +2507,10 @@
                </div>
                <div class="yes">
                   <b
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:16px;height:16px"
                         class="ajic ajic-16"
                         src="./assets/icons/ic-check-g.png"
-                        alt=""
-                     />The video runs wherever Jitsi runs</b
+                        alt="" width="16" height="16">The video runs wherever Jitsi runs</b
                   >
                   <p>
                      Public <code>meet.jit.si</code> today. Your own Jitsi
@@ -2539,11 +2522,10 @@
             <div class="r">
                <div class="no">
                   <b
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:16px;height:16px"
                         class="ajic ajic-16"
                         src="./assets/icons/ic-cross-r.png"
-                        alt=""
-                     />Somebody pastes the real link in by hand</b
+                        alt="" width="16" height="16">Somebody pastes the real link in by hand</b
                   >
                   <p>
                      And they do it <em>after</em> Odoo already sent the
@@ -2553,11 +2535,10 @@
                </div>
                <div class="yes">
                   <b
-                     ><img
+                     ><img style="display:inline-block;vertical-align:middle;width:16px;height:16px"
                         class="ajic ajic-16"
                         src="./assets/icons/ic-check-g.png"
-                        alt=""
-                     />Nobody pastes anything, ever</b
+                        alt="" width="16" height="16">Nobody pastes anything, ever</b
                   >
                   <p>
                      The room is in the field, on the Join button and inside the
@@ -2762,11 +2743,10 @@
                <div class="ajqr-c ajqr-lead">
                   <div class="ajqr-top">
                      <span class="ajqr-ico"
-                        ><img
+                        ><img style="display:inline-block;vertical-align:middle;width:18px;height:18px"
                            class="ajic ajic-18"
                            src="./assets/icons/ic-server-w.png"
-                           alt=""
-                     /></span>
+                           alt="" width="18" height="18"></span>
                      <span class="ajqr-tag hot">Most asked</span>
                   </div>
                   <h3 class="ajqr-ch">Point it at our own Jitsi</h3>
@@ -2788,11 +2768,10 @@
                <div class="ajqr-c">
                   <div class="ajqr-top">
                      <span class="ajqr-ico"
-                        ><img
+                        ><img style="display:inline-block;vertical-align:middle;width:18px;height:18px"
                            class="ajic ajic-18"
                            src="./assets/icons/ic-code-w.png"
-                           alt=""
-                     /></span>
+                           alt="" width="18" height="18"></span>
                      <span class="ajqr-tag">Written reply</span>
                   </div>
                   <h3 class="ajqr-ch">Report a bug or ask for a feature</h3>
@@ -2817,11 +2796,10 @@
                <div class="ajqr-c">
                   <div class="ajqr-top">
                      <span class="ajqr-ico"
-                        ><img
+                        ><img style="display:inline-block;vertical-align:middle;width:18px;height:18px"
                            class="ajic ajic-18"
                            src="./assets/icons/ic-eye-w.png"
-                           alt=""
-                     /></span>
+                           alt="" width="18" height="18"></span>
                      <span class="ajqr-tag">Read first</span>
                   </div>
                   <h3 class="ajqr-ch">The write-up on our blog</h3>
@@ -3803,11 +3781,10 @@
                <div class="ajqr-c ajqr-lead">
                   <div class="ajqr-top">
                      <span class="ajqr-ico"
-                        ><img
+                        ><img style="display:inline-block;vertical-align:middle;width:18px;height:18px"
                            class="ajic ajic-18"
                            src="./assets/icons/ic-video-w.png"
-                           alt=""
-                     /></span>
+                           alt="" width="18" height="18"></span>
                      <span class="ajqr-tag hot">30 minutes</span>
                   </div>
                   <h3 class="ajqr-ch">Book a walkthrough</h3>
@@ -3831,11 +3808,10 @@
                <div class="ajqr-c">
                   <div class="ajqr-top">
                      <span class="ajqr-ico"
-                        ><img
+                        ><img style="display:inline-block;vertical-align:middle;width:18px;height:18px"
                            class="ajic ajic-18"
                            src="./assets/icons/ic-mail-w.png"
-                           alt=""
-                     /></span>
+                           alt="" width="18" height="18"></span>
                      <span class="ajqr-tag">English or French</span>
                   </div>
                   <h3 class="ajqr-ch">E-mail the team</h3>
@@ -3860,11 +3836,10 @@
                <div class="ajqr-c">
                   <div class="ajqr-top">
                      <span class="ajqr-ico"
-                        ><img
+                        ><img style="display:inline-block;vertical-align:middle;width:18px;height:18px"
                            class="ajic ajic-18"
                            src="./assets/icons/ic-phone-w.png"
-                           alt=""
-                     /></span>
+                           alt="" width="18" height="18"></span>
                      <span class="ajqr-tag">Fastest reply</span>
                   </div>
                   <h3 class="ajqr-ch">WhatsApp</h3>
