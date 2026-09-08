@@ -33,6 +33,9 @@
     "installable": True,
     "application": False,
     "auto_install": False,
-    "images": ["static/description/banner.png"],
+    "images": [
+       "static/description/banner.gif",
+       "static/description/icon.png",
+    ],
     "uninstall_hook": "_uninstall_hook",
 }
