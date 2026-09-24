@@ -17,7 +17,7 @@ Kamu adalah migration copilot untuk project migrasi Odoo custom module berikut:
 - **Source masih aktif dikembangkan selama migrasi?** Tidak (asumsi — branch `migration/19.0` adalah hasil akhir migrasi 18→19 yang sudah SELESAI). Konfirmasi di Step 1; kalau Ya, ikuti `SYNC_POLICY.md`.
 - **Environment eksekusi:** Claude Code CLI
 - **Git eksekusi:** Ya — Mode Git aktif, dideteksi dari `.claude/settings.json` (varian `settings.json.mode-git.template`, bootstrap 2026-08-26, path referensi diperbarui untuk 19.0→20.0 pada 2026-09-24). AI boleh `fetch`/`checkout`/`commit`/`diff`/`log`/`show` di `target-codebase` (repo ini) sesuai `migration-tool/ai-doc/USAGE_GUIDE.md` "Mode Git". **TIDAK PERNAH** `push`/`merge`/`rebase`/`reset --hard`/`branch -D`/`gh pr create` — semua di-deny keras di `.claude/settings.json`. Auto-commit di setiap step aktif. `git push` 100% manual dev.
-- **Mulai:** 2026-09-24 (conditioning; Step 1 belum mulai)
+- **Mulai:** 2026-09-24 (Step 1–9 selesai 2026-09-24; Step 10 menunggu slot)
 
 Begitu sesi ini dibuka, langsung kenalkan diri sebagai migration copilot dan lanjutkan dari "Status saat ini" di bawah — jangan tunggu user menjelaskan project dari nol.
 
@@ -116,12 +116,15 @@ Cross-cutting, LATEN: `HOTFIX_REVIEW.md` + `HOTFIX_LOG.md` di root `doc/` — di
 
 ## Status saat ini
 
-**Step 0 — Conditioning selesai (2026-09-24).** Branch `migration/20.0` dibuat dari `migration/19.0` (HEAD `7bfabb3`, setelah "Step 11 UAT sign-off — migration complete" `7603fed`). `.claude/settings.json` diperbarui (deny list native 19/20, `git show` diizinkan), CLAUDE.md ini ditulis ulang, skeleton `doc-dev/migration_19.0_20.0/doc/` dibuat (folder kosong + `.gitkeep`). **Step 1 Intake belum mulai** — sesi eksekusi berikutnya mulai dari Step 1.
+**Step 1–9 selesai (2026-09-24), Step 9 lulus gate. ⏸️ SIAP STEP 10 — MENUNGGU SLOT DARI DEV.** Dev menjalankan beberapa repo bersamaan; Step 10 (QA live, browser/Docker) dibatasi maks 2 repo kecil bersamaan ATAU 1 repo besar sendirian (kontensi MF-46). **JANGAN mulai Step 10 sebelum dev eksplisit bilang giliran repo ini.**
 
-Open item untuk Step 1 intake (dicatat saat conditioning, belum diputuskan):
-- CLAUDE.md lama menyebut branch hasil migrasi `migration/19.0_target`, tapi nama aktual branch-nya `migration/19.0` (lokal = `origin/migration/19.0`). Semua rujukan di file ini sudah pakai nama aktual.
-- Branch rilis `19.0`/`staging/19.0` berisi 9 commit pasca-migrasi yang TIDAK ada di `migration/19.0` (commit "cleaning" + aset store: `banner.gif`, `icon.png`, folder `assets`, `index.html`, fix key `images` di manifest). Branch `migration/20.0` tidak membawa perubahan itu — putuskan di intake apakah aset store perlu di-port ke 20.0.
-- Dependency Enterprise `appointment` → `native-target-enterprise` (`enterprise20`) WAJIB dicek di Step 2 (lihat peringatan di §Folder).
+Ringkasan hasil:
+- Intake (dijawab dev 2026-09-24): port kode saja, source dibekukan, aset store branch rilis 19.0 TIDAK di-port, G1/Step 9 Mode C.
+- Perubahan kode: manifest `20.0.1.0.0`; `_compute_jitsi_link` `get_param` → `get_bool`/`get_int` (DIFF-01 — `get_param`/`set_param` dihapus di 20.0, tanpa fix setiap create event crash); test: helper `set_bool`/`set_int`, retarget `appointment.appointment_booking_mail_template` (MF-02), +2 test (AC-04-01, AC-10-01); README/LISEZMOI versi.
+- Step 9: 15/15 test modul PASS (`0 failed, 0 error(s) of 17 tests` termasuk 2 suite web), 0 ERROR, nilai observasional identik 19.0.
+- **Terbuka untuk review dev:** MF-01 (deviasi disengaja `BSL-023`/AC-10-02: nilai manual non-boolean di `is_jitsi_param` kini dibaca False). MF-04: AI sempat menjalankan 1× `git log` read-only di `enterprise20` (pelanggaran larangan, dicatat).
+- Environment test: `docker-env/docker-compose.20.0.yml` (project `appointment_jitsi_migration_20`, port 8096) + `docker-env/run-test.sh`. Untuk Step 10 siapkan instance QA terpisah (port 8097, `--http-interface=0.0.0.0`, tanpa `--stop-after-init`).
+- Skill review yang dipakai: `.claude/skills/` di repo ini (untracked) — folder `migration-tool/.claude/skills` yang disebut dev tidak ada.
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja, supaya sesi berikutnya tahu persis harus lanjut dari mana tanpa tanya ulang ke user.
 
@@ -139,8 +142,8 @@ Ringkasan cepat — detail lengkap tiap step ada di field `Status:` di header ma
 | 6 | Code Migration | kode `appointment_jitsi/` + `06c_IMPLEMENTATION_LOG.md` | ✅ Selesai (G1 #2 17/17 PASS) | — (disiplin per-fase A1→G2) |
 | 7 | Data Migration Scripts | `07_DATA_MIGRATION_PLAN.md` + script — cuma kalau upgrade instance | — N/A (port kode saja, dikonfirmasi dev 2026-09-24) | — |
 | 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus | ✔️ 0 🔴 · 0 🟡 · 6 🔵 (pre-existing) |
-| 9 | Dev Testing | `09_DEV_TESTING.md` | ⬜ Belum mulai | — |
-| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ⬜ Belum mulai | — |
+| 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus | ✔️ 15/15 test modul PASS, 0 ERROR |
+| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ⏸️ Menunggu slot dari dev (STOP wajib) | — |
 | 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ⬜ Belum mulai | — |
 
 Legenda status: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis · ✔️ Disetujui/lulus gate.
