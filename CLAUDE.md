@@ -165,7 +165,7 @@ Legenda status: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai d
 
 > **Peringatan Enterprise:** dependency `appointment` berlisensi Enterprise (OEEL-1) di 19.0 dan 20.0. Community DAN Enterprise adalah DUA clone terpisah — sebelum step 2 dinyatakan selesai, `enterprise20` WAJIB sudah dicek langsung, bukan diasumsikan "kemungkinan sama" dari Community saja.
 
-> **Struktur native (dicek 2026-09-24):** model dua-clone standar — `odoo19`/`odoo20` repo Community penuh, `enterprise19`/`enterprise20` addons-only terpisah. BUKAN folder gabungan seperti `enterprise19.0` yang dipakai project 18→19 (folder itu sudah tidak ada).
+> **Struktur native (dicek 2026-09-24):** model dua-clone standar — `odoo19`/`odoo20` repo Community penuh, `enterprise19`/`enterprise20` addons-only terpisah. Empat path terpisah, versi tepat: source = `odoo19` + `enterprise19`, target = `odoo20` + `enterprise20`. BUKAN folder gabungan Community+Enterprise satu folder seperti yang dipakai project 18→19 (folder gabungan itu sudah tidak ada).
 
 ---
 
