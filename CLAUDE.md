@@ -116,7 +116,7 @@ Cross-cutting, LATEN: `HOTFIX_REVIEW.md` + `HOTFIX_LOG.md` di root `doc/` — di
 
 ## Status saat ini
 
-**Step 1–10 selesai (2026-09-24), Step 10 lulus gate.** Step 10 dijalankan atas izin eksplisit dev ("Lanjut step 10"); instance QA sudah dimatikan (`down -v`), slot Docker/browser bebas. **Berikutnya: Step 11 UAT** — AI hanya menyiapkan `11_UAT_CHECKLIST.md`; eksekusi & sign-off 100% manual dev.
+**Step 1–10 selesai **Step 1–10 selesai (2026-09-24), Step 10 lulus gate.** Step 10 dijalankan atas izin eksplisit dev ("Lanjut step 10"); instance QA sudah dimatikan (`down -v`), slot Docker/browser bebas. **Berikutnya: Step 11 UAT** — AI hanya menyiapkan `11_UAT_CHECKLIST.md`; eksekusi & sign-off 100% manual dev. lulus gate (2026-09-24). Step 11: `11_UAT_CHECKLIST.md` sudah DRAFT — ⏳ menunggu dev menjalankan T-01..T-05 & sign-off.** Setelah sign-off dikonfirmasi dev: tulis `doc/MIGRATION_CLOSED.md` (SHA HEAD) + commit "Step 11 gate passed". Instance QA sudah dimatikan.
 - Step 10: 7 skenario Pass (5 live di 20.0 & 19.0 berdampingan via Playwright MCP), Cross-Version Compare 3 `NATIVE-DIFF` (RMV-01..03), 0 `REGRESI`. Detail: `10_qa/10_BUSINESS_FLOW_MIGRATION.md`, `CROSS_VERSION_COMPARE.md`, checklist manusia `10_qa/human_qa/`.
 - Catatan: pembatasan slot Step 10 dari dev (maks 2 repo kecil bersamaan / 1 repo besar sendirian, MF-46) tetap berlaku kalau Step 10 perlu diulang.
 
@@ -146,7 +146,7 @@ Ringkasan cepat — detail lengkap tiap step ada di field `Status:` di header ma
 | 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus | ✔️ 0 🔴 · 0 🟡 · 6 🔵 (pre-existing) |
 | 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus | ✔️ 15/15 test modul PASS, 0 ERROR |
 | 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` + `CROSS_VERSION_COMPARE.md` | ✔️ Lulus | ✔️ 7 skenario Pass (5 live), CVC 0 REGRESI |
-| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ⬜ Belum mulai | — |
+| 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ✅ Draft siap | ⏳ Menunggu eksekusi & sign-off dev |
 
 Legenda status: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis · ✔️ Disetujui/lulus gate.
 

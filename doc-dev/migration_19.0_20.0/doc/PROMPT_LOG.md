@@ -19,8 +19,8 @@
 | 8 — Code Review | 0 | 0 | |
 | 9 — Dev Testing | 0 | 0 | |
 | 10 — QA Testing | 2 | 0 | "pertanyaan kurang tegas? status" (AI merumuskan ulang 2 keputusan jadi pertanyaan ya/tidak) + "1,2 YA, lanjut step 10" (MF-01 disetujui + izin slot Step 10) |
-| 11 — UAT Sign-off | | | |
-| **Total** | 3 | 0 | |
+| 11 — UAT Sign-off | 2 | 0 | "apa pertanyaan?" (klarifikasi) + "YA" (izin draft Step 11) |
+| **Total** | 5 | 0 | |
 
 ## Catatan Definisi
 
