@@ -19,6 +19,7 @@
 | RMV-01 | Video Link event baru: 19.0 kosong sampai reload, 20.0 langsung tampil (nilai DB identik) | 10 (CVC) | `NATIVE-DIFF` | Rendah | ✅ Dicatat, tidak difix — info UAT |
 | RMV-02 | Event Discuss di 20.0 otomatis mendapat `discuss.channel` (19.0 tidak); event Jitsi tidak | 10 (CVC) | `NATIVE-DIFF` | Rendah | ✅ Dicatat, tidak difix — info UAT |
 | RMV-03 | Gaya widget Settings/form & layout email native berbeda | 10 (CVC) | `NATIVE-DIFF` | Info | ✅ Dicatat |
+| MF-05 | UAT ditutup dengan waiver — sign-off berdasarkan bukti AI Step 9/10, bukan eksekusi manual owner | 11 | `[PROSES]` | Sedang | ✅ Diterima owner (chat 2026-09-24); 3 langkah belum pernah dites, direkomendasikan cek staging |
 
 **Diwarisi (bukan finding baru):** F-01..F-13 (17→18) dan MF-01/MF-02 (18→19) dipertahankan sebagai baseline 19.0 (`01b_BASELINE_SPEC.md`).
 
@@ -79,6 +80,13 @@
 **Deskripsi:** checkbox/ikon bantuan Settings, widget Video Link, layout form event, email (wrapper `redirect-url.email`, footer, preview di iframe) berbeda gaya. Struktur & teks custom modul identik.
 
 **Cross-link:** MF-03 → lihat juga RMV-01/RMV-02 (efek UI dari DIFF-04 yang ditemukan lewat Cross-Version Compare).
+
+---
+
+### MF-05 — UAT waiver
+**Ditemukan di:** Step 11 (2026-09-24) · **Tag:** `[PROSES]`
+**Deskripsi:** Owner (Kuncoro) menyatakan via chat "UAT diselsaiakn bersarkan AI-test yang sudah ada". Kolom Actual `11_UAT_CHECKLIST.md` diisi AI dengan rujukan bukti Step 9/10; tidak ada eksekusi manual oleh business user. Langkah yang TIDAK tercakup bukti apapun: T-02 sebagai user non-admin, T-03 #3 (meeting lama tetap link Jitsi setelah setting dimatikan), T-05 booking portal + email nyata (hanya Preview template).
+**Rekomendasi:** jalankan `10_qa/human_qa/01_SMOKE.md` + `04_NEGATIVE.md` di staging 20.0 sebelum go-live produksi.
 
 ---
 
