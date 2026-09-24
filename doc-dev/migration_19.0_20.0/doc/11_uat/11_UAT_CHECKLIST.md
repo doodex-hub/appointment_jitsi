@@ -117,4 +117,4 @@ Owner mengonfirmasi sadar & menerima:
 
 ## Penutupan Migrasi (setelah Sign-off terisi)
 
-- [ ] `doc/MIGRATION_CLOSED.md` ditulis dengan SHA HEAD `migration/20.0` + tanggal (AI bisa menuliskannya setelah Anda konfirmasi sign-off).
+- [x] `doc/MIGRATION_CLOSED.md` ditulis: SHA `b460a32`, branch `migration/20.0`, 2026-09-24.
