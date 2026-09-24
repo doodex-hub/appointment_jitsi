@@ -18,9 +18,9 @@
 | 7 — Data Migration Scripts | — | — | N/A (port kode saja) |
 | 8 — Code Review | 0 | 0 | |
 | 9 — Dev Testing | 0 | 0 | |
-| 10 — QA Testing | | | Menunggu slot dari dev (STOP wajib) |
+| 10 — QA Testing | 2 | 0 | "pertanyaan kurang tegas? status" (AI merumuskan ulang 2 keputusan jadi pertanyaan ya/tidak) + "1,2 YA, lanjut step 10" (MF-01 disetujui + izin slot Step 10) |
 | 11 — UAT Sign-off | | | |
-| **Total** | 1 | 0 | |
+| **Total** | 3 | 0 | |
 
 ## Catatan Definisi
 

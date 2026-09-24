@@ -11,3 +11,6 @@ __pycache__/
 # tidak match kalau nested di bawah folder modul. Baris lama di atas dipertahankan (harmless),
 # baris ini yang benar-benar match.
 **/docker-env/logs/
+
+# Playwright MCP output (snapshot/console) — bukan artefak project
+.playwright-mcp/

@@ -116,14 +116,16 @@ Cross-cutting, LATEN: `HOTFIX_REVIEW.md` + `HOTFIX_LOG.md` di root `doc/` — di
 
 ## Status saat ini
 
-**Step 1–9 selesai (2026-09-24), Step 9 lulus gate. ⏸️ SIAP STEP 10 — MENUNGGU SLOT DARI DEV.** Dev menjalankan beberapa repo bersamaan; Step 10 (QA live, browser/Docker) dibatasi maks 2 repo kecil bersamaan ATAU 1 repo besar sendirian (kontensi MF-46). **JANGAN mulai Step 10 sebelum dev eksplisit bilang giliran repo ini.**
+**Step 1–10 selesai (2026-09-24), Step 10 lulus gate.** Step 10 dijalankan atas izin eksplisit dev ("Lanjut step 10"); instance QA sudah dimatikan (`down -v`), slot Docker/browser bebas. **Berikutnya: Step 11 UAT** — AI hanya menyiapkan `11_UAT_CHECKLIST.md`; eksekusi & sign-off 100% manual dev.
+- Step 10: 7 skenario Pass (5 live di 20.0 & 19.0 berdampingan via Playwright MCP), Cross-Version Compare 3 `NATIVE-DIFF` (RMV-01..03), 0 `REGRESI`. Detail: `10_qa/10_BUSINESS_FLOW_MIGRATION.md`, `CROSS_VERSION_COMPARE.md`, checklist manusia `10_qa/human_qa/`.
+- Catatan: pembatasan slot Step 10 dari dev (maks 2 repo kecil bersamaan / 1 repo besar sendirian, MF-46) tetap berlaku kalau Step 10 perlu diulang.
 
 Ringkasan hasil:
 - Intake (dijawab dev 2026-09-24): port kode saja, source dibekukan, aset store branch rilis 19.0 TIDAK di-port, G1/Step 9 Mode C.
 - Perubahan kode: manifest `20.0.1.0.0`; `_compute_jitsi_link` `get_param` → `get_bool`/`get_int` (DIFF-01 — `get_param`/`set_param` dihapus di 20.0, tanpa fix setiap create event crash); test: helper `set_bool`/`set_int`, retarget `appointment.appointment_booking_mail_template` (MF-02), +2 test (AC-04-01, AC-10-01); README/LISEZMOI versi.
 - Step 9: 15/15 test modul PASS (`0 failed, 0 error(s) of 17 tests` termasuk 2 suite web), 0 ERROR, nilai observasional identik 19.0.
-- **Terbuka untuk review dev:** MF-01 (deviasi disengaja `BSL-023`/AC-10-02: nilai manual non-boolean di `is_jitsi_param` kini dibaca False). MF-04: AI sempat menjalankan 1× `git log` read-only di `enterprise20` (pelanggaran larangan, dicatat).
-- Environment test: `docker-env/docker-compose.20.0.yml` (project `appointment_jitsi_migration_20`, port 8096) + `docker-env/run-test.sh`. Untuk Step 10 siapkan instance QA terpisah (port 8097, `--http-interface=0.0.0.0`, tanpa `--stop-after-init`).
+- MF-01 (deviasi disengaja `BSL-023`/AC-10-02) **disetujui dev 2026-09-24**. MF-04: AI sempat menjalankan 1× `git log` read-only di `enterprise20` (pelanggaran larangan, dicatat).
+- Environment test: `docker-env/docker-compose.20.0.yml` + `docker-env/run-test.sh` (Step 9, port 8096); `docker-env/docker-compose.cvc.yml` + `docker-env/cvc-19.0/` (Step 10 QA + Cross-Version Compare, port 8097 = 20.0, 8098 = 19.0; login Playwright via session server-side, lihat `10_BUSINESS_FLOW_MIGRATION.md`).
 - Skill review yang dipakai: `.claude/skills/` di repo ini (untracked) — folder `migration-tool/.claude/skills` yang disebut dev tidak ada.
 
 > AI: update bagian ini sendiri di akhir tiap sesi kerja, supaya sesi berikutnya tahu persis harus lanjut dari mana tanpa tanya ulang ke user.
@@ -143,7 +145,7 @@ Ringkasan cepat — detail lengkap tiap step ada di field `Status:` di header ma
 | 7 | Data Migration Scripts | `07_DATA_MIGRATION_PLAN.md` + script — cuma kalau upgrade instance | — N/A (port kode saja, dikonfirmasi dev 2026-09-24) | — |
 | 8 | Code Review | `08_CODE_REVIEW.md` | ✔️ Lulus | ✔️ 0 🔴 · 0 🟡 · 6 🔵 (pre-existing) |
 | 9 | Dev Testing | `09_DEV_TESTING.md` | ✔️ Lulus | ✔️ 15/15 test modul PASS, 0 ERROR |
-| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` | ⏸️ Menunggu slot dari dev (STOP wajib) | — |
+| 10 | QA Testing | `10_BUSINESS_FLOW_MIGRATION.md` + `CROSS_VERSION_COMPARE.md` | ✔️ Lulus | ✔️ 7 skenario Pass (5 live), CVC 0 REGRESI |
 | 11 | UAT Sign-off | `11_UAT_CHECKLIST.md` | ⬜ Belum mulai | — |
 
 Legenda status: ⬜ Belum mulai · 🔄 Sedang dikerjakan · ✅ Draft/selesai ditulis · ✔️ Disetujui/lulus gate.
