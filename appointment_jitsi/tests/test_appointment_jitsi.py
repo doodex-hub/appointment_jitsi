@@ -16,12 +16,16 @@ class TestAppointmentJitsi(TransactionCase):
         cls.CalendarEvent = cls.env['calendar.event']
         cls.ICP = cls.env['ir.config_parameter'].sudo()
 
+    # 20.0: ir.config_parameter.get_param()/set_param() dihapus, diganti API bertipe
+    # (get_bool/get_int/get_str + set_*) -- lihat FINDINGS.md MF-01 (migrasi 19.0->20.0).
     def _enable_jitsi(self, company):
-        self.ICP.set_param('is_jitsi_param', 'True')
-        self.ICP.set_param('company_param', str(company.id))
+        self.ICP.set_bool('is_jitsi_param', True)
+        self.ICP.set_int('company_param', company.id)
 
     def _disable_jitsi(self):
-        self.ICP.set_param('is_jitsi_param', 'False')
+        # 19.0: set_param('is_jitsi_param', 'False') menyimpan string "False" yang TRUTHY
+        # (Jitsi tetap aktif, BSL-023). 20.0: set_bool(False) -> get_bool() False (MF-01).
+        self.ICP.set_bool('is_jitsi_param', False)
 
     def test_ac_01_01_jitsi_link_format_when_enabled(self):
         """AC-01-01 (BR-01): Jitsi aktif + company valid -> jitsi_link format benar."""
@@ -49,8 +53,8 @@ class TestAppointmentJitsi(TransactionCase):
             'start': '2026-08-10 10:00:00',
             'stop': '2026-08-10 11:00:00',
         })
-        _logger.info("BACKFILL AC-01-02: get_param(is_jitsi_param)=%r videocall_location=%r",
-                     self.ICP.get_param('is_jitsi_param'), event.videocall_location)
+        _logger.info("BACKFILL AC-01-02: get_str(is_jitsi_param)=%r videocall_location=%r",
+                     self.ICP.get_str('is_jitsi_param', None), event.videocall_location)
         is_jitsi_link = bool(event.videocall_location) and \
             event.videocall_location.startswith('https://meet.jit.si')
         self.assertFalse(is_jitsi_link,
@@ -66,8 +70,8 @@ class TestAppointmentJitsi(TransactionCase):
             'company_param': company.id,
         })
         settings.execute()
-        raw_value = self.ICP.get_param('is_jitsi_param')
-        _logger.info("BACKFILL AC-01-03/F-01: get_param(is_jitsi_param) setelah uncheck = %r (type=%s)",
+        raw_value = self.ICP.get_str('is_jitsi_param', None)
+        _logger.info("BACKFILL AC-01-03/F-01: get_str(is_jitsi_param) setelah uncheck = %r (type=%s)",
                      raw_value, type(raw_value).__name__)
         event = self.CalendarEvent.create({
             'name': 'Test Uncheck Event',
@@ -286,7 +290,10 @@ class TestAppointmentJitsi(TransactionCase):
         jitsi_link -- root cause: data/mail_template_data.xml TIDAK terdaftar di __manifest__.py
         'data', jadi override template ini TIDAK PERNAH di-load Odoo sama sekali. Assertion di
         bawah mendokumentasikan perilaku SEKARANG (bug) secara eksplisit -- kalau F-13 diperbaiki
-        (file ditambahkan ke manifest), test ini WAJIB direvisi mengikuti behavior baru."""
+        (file ditambahkan ke manifest), test ini WAJIB direvisi mengikuti behavior baru.
+
+        20.0: XML-ID template "booked" di-rename native jadi
+        appointment.appointment_booking_mail_template (FINDINGS.md MF-02, migrasi 19.0->20.0)."""
         company = self.env.company
         self._enable_jitsi(company)
         partner = self.env['res.partner'].create({'name': 'Test QA Partner'})
@@ -296,7 +303,7 @@ class TestAppointmentJitsi(TransactionCase):
             'stop': '2026-08-10 11:00:00',
             'partner_ids': [(4, partner.id)],
         })
-        template = self.env.ref('appointment.appointment_booked_mail_template')
+        template = self.env.ref('appointment.appointment_booking_mail_template')
         rendered = template._render_field('body_html', event.ids)
         body = rendered[event.id]
         _logger.info("BACKFILL S-01/F-13: jitsi_link=%r muncul_di_body=%s",
@@ -307,3 +314,71 @@ class TestAppointmentJitsi(TransactionCase):
         self.assertIn('/calendar/meeting/join?token=', body,
                       "Body seharusnya cuma memuat link 'Join' standar Odoo core (access_token), "
                       "bukan jitsi_link -- membuktikan template YANG DIPAKAI adalah versi core asli")
+
+    def test_mig20_ac_04_01_action_join_video_call(self):
+        """AC-04-01 (BSL-007), migrasi 19.0->20.0: action_join_video_call() -> jitsi_link kalau
+        event.is_jitsi, selain itu videocall_location; target 'new'. Belum pernah punya test
+        eksplisit sebelum migrasi ini (gap non-blocking sejak 17.0->18.0)."""
+        self._enable_jitsi(self.env.company)
+        event_jitsi = self.CalendarEvent.create({
+            'name': 'Test Join Jitsi',
+            'start': '2026-08-10 10:00:00',
+            'stop': '2026-08-10 11:00:00',
+            'is_jitsi': True,
+        })
+        event_plain = self.CalendarEvent.create({
+            'name': 'Test Join Plain',
+            'start': '2026-08-10 12:00:00',
+            'stop': '2026-08-10 13:00:00',
+            'is_jitsi': False,
+        })
+        self.assertTrue(event_jitsi.jitsi_link)
+        # Bedakan kedua sumber URL supaya assertion benar-benar menguji cabang is_jitsi.
+        event_jitsi.write({'videocall_location': 'https://example.com/other-room'})
+        event_plain.clear_jitsi_link()
+        self.assertEqual(event_jitsi.action_join_video_call(), {
+            'type': 'ir.actions.act_url',
+            'url': event_jitsi.jitsi_link,
+            'target': 'new',
+        })
+        self.assertEqual(event_plain.action_join_video_call(), {
+            'type': 'ir.actions.act_url',
+            'url': event_plain.videocall_location,
+            'target': 'new',
+        })
+
+    def test_mig20_ac_10_01_uncheck_setting_falls_back_to_discuss(self):
+        """AC-10-01 (BSL-014), migrasi 19.0->20.0: centang lalu uncheck "Enable Jitsi
+        Integration" lewat res.config.settings (jalur UI) -> event baru kembali ke Discuss.
+        19.0: uncheck menghapus row ir.config_parameter; 20.0: row berisi "False" dan dibaca
+        get_bool() (FINDINGS.md MF-01) -- observable outcome harus tetap sama."""
+        company = self.env.company
+        self.env['res.config.settings'].create({
+            'is_jitsi': True,
+            'company_param': company.id,
+        }).execute()
+        self.assertTrue(self.ICP.get_bool('is_jitsi_param'))
+        event_on = self.CalendarEvent.create({
+            'name': 'Test Setting On',
+            'start': '2026-08-10 10:00:00',
+            'stop': '2026-08-10 11:00:00',
+        })
+        self.assertTrue(event_on.jitsi_link.startswith('https://meet.jit.si/'))
+
+        self.env['res.config.settings'].create({
+            'is_jitsi': False,
+            'company_param': company.id,
+        }).execute()
+        _logger.info("MIG20 AC-10-01: get_str(is_jitsi_param) setelah uncheck = %r",
+                     self.ICP.get_str('is_jitsi_param', None))
+        self.assertFalse(self.ICP.get_bool('is_jitsi_param'))
+        event_off = self.CalendarEvent.create({
+            'name': 'Test Setting Off',
+            'start': '2026-08-10 12:00:00',
+            'stop': '2026-08-10 13:00:00',
+        })
+        self.assertFalse(event_off.jitsi_link)
+        self.assertFalse(event_off.videocall_location
+                         and event_off.videocall_location.startswith('https://meet.jit.si'),
+                         "Setelah uncheck, event baru harus fallback ke Discuss: %r"
+                         % event_off.videocall_location)

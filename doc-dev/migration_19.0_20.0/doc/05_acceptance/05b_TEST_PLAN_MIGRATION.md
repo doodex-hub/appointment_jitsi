@@ -19,13 +19,13 @@
 | AC-01-02 | Fallback Discuss | `test_ac_01_02_fallback_discuss_when_disabled` (assert) | N/A |
 | AC-02-01/02 | create single-dict | `test_ac_02_01_…`, `test_ac_02_02_…` (assert) | N/A |
 | AC-03-01 | Urutan akses (quirk) | `test_ac_03_01_…` (assert compute name + log) | N/A |
-| AC-04-01 | `action_join_video_call` | **BARU** `test_ac_04_01_action_join_video_call` (assert) | N/A |
+| AC-04-01 | `action_join_video_call` | **BARU** `test_mig20_ac_04_01_action_join_video_call` (assert) | N/A |
 | AC-05-01 | generate/clear | `test_ac_08_01_…` (assert) | N/A |
 | AC-06-01 | batch create | `test_ac_02_03_…` (log) | N/A |
 | AC-07-01 | write toggle | `test_ac_04_01_write_toggle_no_recompute` (log) | N/A |
 | AC-08-01 | company global | `test_ac_05_01_…` (assert) | N/A |
 | AC-09-01 | nama mentah | `test_ac_06_01_…` (assert) | N/A |
-| AC-10-01 | uncheck → Discuss | **BARU** `test_ac_10_01_uncheck_setting_falls_back_to_discuss` (assert) + `test_ac_01_03_…` (log) | N/A |
+| AC-10-01 | uncheck → Discuss | **BARU** `test_mig20_ac_10_01_uncheck_setting_falls_back_to_discuss` (assert) + `test_ac_01_03_…` (log) | N/A |
 | AC-10-02 | deviasi BSL-023 | tidak langsung (helper `_disable_jitsi`) | N/A |
 | AC-11-01 🔴 | email tanpa Jitsi | `test_qa_s01_…` (assert, retarget MF-02) | N/A |
 | AC-12-01 | controller mati | `test_ac_07_01_…` (assert) | N/A |

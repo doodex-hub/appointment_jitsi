@@ -39,9 +39,9 @@ class CalendarEvent(models.Model):
         """
         Compute and set the Jitsi link based on the access token.
         """
-        get_param = self.env['ir.config_parameter'].sudo().get_param
-        is_jitsi_enabled = get_param('is_jitsi_param')
-        company_param_id = get_param('company_param')
+        ICP = self.env['ir.config_parameter'].sudo()
+        is_jitsi_enabled = ICP.get_bool('is_jitsi_param')
+        company_param_id = ICP.get_int('company_param')
         company_param = self.env['res.company'].sudo().search([('id', '=', company_param_id)], limit=1)
         company_param = company_param.name if company_param else 'Record not found'
         

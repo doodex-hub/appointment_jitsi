@@ -14,7 +14,7 @@
 |---|---|---|---|---|---|
 | MF-01 | `ir.config_parameter.get_param()`/`set_param()` dihapus di 20.0 — `_compute_jitsi_link` crash; padanan typed mengubah semantik string truthy (`BSL-023`) | 2 | `[GAP-MIGRASI]` | **Tinggi** | 🔄 Keputusan AI (default aman) diterapkan — menunggu review dev, lihat detail |
 | MF-02 | XML-ID `appointment.appointment_booked_mail_template` di-rename `appointment_booking_mail_template` — test `test_qa_s01` wajib retarget | 2 | `[GAP-MIGRASI]` | Rendah | 🔄 Retarget test (intent sama) |
-| MF-03 | `calendar.event.create()` 20.0 memanggil `_ensure_videocall_channels()` (flush `videocall_location`) — bisa menggeser urutan compute `BSL-010` saat create | 2 | `[GAP-MIGRASI]` | Sedang | ⏳ Pending verifikasi empiris G1/Step 9 |
+| MF-03 | `calendar.event.create()` 20.0 memanggil `_ensure_videocall_channels()` (flush `videocall_location`) — bisa menggeser urutan compute `BSL-010` saat create | 2 | `[GAP-MIGRASI]` | Sedang | ✅ RESOLVED G1 #2 (2026-09-24) — nilai observable identik 19.0; efek channel Discuss diamati di Step 10 |
 | MF-04 | Pelanggaran proses: AI menjalankan satu `git log` read-only di repo `enterprise20` (dilarang CLAUDE.md) | 1 | `[PROSES]` | Rendah | ✅ Dicatat & dilaporkan ke dev; tidak diulang |
 
 **Diwarisi (bukan finding baru):** F-01..F-13 (17→18) dan MF-01/MF-02 (18→19) dipertahankan sebagai baseline 19.0 (`01b_BASELINE_SPEC.md`).
@@ -50,7 +50,7 @@
 **Ditemukan di:** Step 2 (2026-09-24) · **Tag:** `[GAP-MIGRASI]` · **Ref:** DIFF-04, `[BSL-002]`, `[BSL-010]`
 **Deskripsi:** Native 20.0 menambah `events._ensure_videocall_channels()` di akhir `calendar.event.create()` yang `flush_recordset(['videocall_location'])` lalu membuat `discuss.channel` untuk event ber-`videocall_source='discuss'`. Ini bisa memaksa compute core `videocall_location` jalan sebelum `jitsi_link`.
 **Rekomendasi:** port kode tanpa perubahan (bug-for-bug). Verifikasi nilai akhir di G1/Step 9: `test_ac_01_01` (assert `videocall_location == jitsi_link` saat Jitsi aktif) + log observasional `test_ac_03_01`. Kalau berubah → eskalasi.
-**Status:** ⏳ pending G1.
+**Status:** ✅ RESOLVED (G1 #2, 2026-09-24) — `test_ac_01_01` PASS (`videocall_location == jitsi_link`), `test_ac_03_01` Skenario A Jitsi penuh / Skenario B `videocall_location=False` / `bug_confirmed=True` = identik log 19.0. Tidak ada perubahan kode. Sisa observasi (apakah `discuss.channel` ikut dibuat untuk event Jitsi — fitur native 20.0, bukan behavior modul) dijadwalkan Step 10.
 
 ---
 

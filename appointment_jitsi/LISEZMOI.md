@@ -53,7 +53,7 @@ Garantit que chaque lien de réunion Jitsi est unique pour le rendez-vous, prés
 3. Après l'installation, configurez les paramètres de l'API Jitsi selon vos besoins pour activer la fonction de génération automatique de liens.
 
 ##Compatibilité
-Version d'Odoo : 17.0
+Version d'Odoo : 20.0
 
 #Licence
 Ce module est sous licence [LGPLv3 licensed](./LICENSE)

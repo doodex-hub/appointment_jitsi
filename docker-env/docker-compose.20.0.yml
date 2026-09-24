@@ -1,0 +1,48 @@
+name: appointment_jitsi_migration_20
+
+# G1 / Step 9 — appointment_jitsi 19.0 -> 20.0. Dipakai lewat run-test.sh (COMPOSE_FILE ini).
+# Project name & port host (8096) sengaja unik: repo migrasi 20.0 lain berjalan bersamaan
+# di mesin yang sama (8080, 8078, 8091, ...).
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data-20:/var/lib/postgresql/data
+
+  odoo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    shm_size: '2gb'
+    environment:
+      # libpq standar (image dibangun sendiri, bukan entrypoint odoo:X.0 resmi)
+      PGHOST: db
+      PGUSER: odoo
+      PGPASSWORD: odoo
+    ports:
+      - "8096:8069"
+    volumes:
+      - ../appointment_jitsi:/mnt/extra-addons/appointment_jitsi
+      - ./logs:/var/log/odoo
+      # native-target Community 20.0 (source, read-only)
+      - D:/Kuncoro/doodex/repo/odoo20:/opt/odoo:ro
+      # native-target Enterprise 20.0 (addons-only, read-only) — `appointment` (OEEL-1)
+      - D:/Kuncoro/doodex/repo/enterprise20:/mnt/enterprise:ro
+    command: >
+      -d appointment_jitsi_test_20
+      -i appointment_jitsi
+      --addons-path=/opt/odoo/addons,/opt/odoo/odoo/addons,/mnt/enterprise,/mnt/extra-addons
+      --http-interface=0.0.0.0
+      --without-demo=all
+      --stop-after-init
+      --logfile=/var/log/odoo/odoo_20.log
+
+volumes:
+  db-data-20:
