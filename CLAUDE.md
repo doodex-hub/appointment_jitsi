@@ -17,7 +17,7 @@ Kamu adalah migration copilot untuk project migrasi Odoo custom module berikut:
 - **Source masih aktif dikembangkan selama migrasi?** Tidak (asumsi — branch `migration/19.0` adalah hasil akhir migrasi 18→19 yang sudah SELESAI). Konfirmasi di Step 1; kalau Ya, ikuti `SYNC_POLICY.md`.
 - **Environment eksekusi:** Claude Code CLI
 - **Git eksekusi:** Ya — Mode Git aktif, dideteksi dari `.claude/settings.json` (varian `settings.json.mode-git.template`, bootstrap 2026-08-26, path referensi diperbarui untuk 19.0→20.0 pada 2026-09-24). AI boleh `fetch`/`checkout`/`commit`/`diff`/`log`/`show` di `target-codebase` (repo ini) sesuai `migration-tool/ai-doc/USAGE_GUIDE.md` "Mode Git". **TIDAK PERNAH** `push`/`merge`/`rebase`/`reset --hard`/`branch -D`/`gh pr create` — semua di-deny keras di `.claude/settings.json`. Auto-commit di setiap step aktif. `git push` 100% manual dev.
-- **Mulai:** 2026-09-24 (Step 1–9 selesai 2026-09-24; Step 10 menunggu slot)
+- **Mulai:** 2026-09-24 (Step 1–10 selesai 2026-09-24; Step 11 menunggu sign-off dev)
 
 Begitu sesi ini dibuka, langsung kenalkan diri sebagai migration copilot dan lanjutkan dari "Status saat ini" di bawah — jangan tunggu user menjelaskan project dari nol.
 
@@ -116,7 +116,7 @@ Cross-cutting, LATEN: `HOTFIX_REVIEW.md` + `HOTFIX_LOG.md` di root `doc/` — di
 
 ## Status saat ini
 
-**Step 1–10 selesai **Step 1–10 selesai (2026-09-24), Step 10 lulus gate.** Step 10 dijalankan atas izin eksplisit dev ("Lanjut step 10"); instance QA sudah dimatikan (`down -v`), slot Docker/browser bebas. **Berikutnya: Step 11 UAT** — AI hanya menyiapkan `11_UAT_CHECKLIST.md`; eksekusi & sign-off 100% manual dev. lulus gate (2026-09-24). Step 11: `11_UAT_CHECKLIST.md` sudah DRAFT — ⏳ menunggu dev menjalankan T-01..T-05 & sign-off.** Setelah sign-off dikonfirmasi dev: tulis `doc/MIGRATION_CLOSED.md` (SHA HEAD) + commit "Step 11 gate passed". Instance QA sudah dimatikan.
+**Step 1–10 selesai & lulus gate (2026-09-24). Step 11: `11_UAT_CHECKLIST.md` sudah DRAFT — ⏳ menunggu dev menjalankan T-01..T-05 & sign-off.** Step 10 dijalankan atas izin eksplisit dev ("Lanjut step 10"); instance QA sudah dimatikan (`down -v`), slot Docker/browser bebas. Setelah dev mengonfirmasi sign-off: tulis `doc/MIGRATION_CLOSED.md` (SHA HEAD `migration/20.0`) + commit "Step 11 gate passed". AI TIDAK mengisi kolom Actual/Status/Sign-off.
 - Step 10: 7 skenario Pass (5 live di 20.0 & 19.0 berdampingan via Playwright MCP), Cross-Version Compare 3 `NATIVE-DIFF` (RMV-01..03), 0 `REGRESI`. Detail: `10_qa/10_BUSINESS_FLOW_MIGRATION.md`, `CROSS_VERSION_COMPARE.md`, checklist manusia `10_qa/human_qa/`.
 - Catatan: pembatasan slot Step 10 dari dev (maks 2 repo kecil bersamaan / 1 repo besar sendirian, MF-46) tetap berlaku kalau Step 10 perlu diulang.
 
