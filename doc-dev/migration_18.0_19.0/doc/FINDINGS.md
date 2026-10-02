@@ -7,7 +7,7 @@
 
 **Modul:** appointment_jitsi
 **Migrasi:** 18.0 → 19.0
-**Terakhir update:** 2026-08-26
+**Terakhir update:** 2026-10-02
 
 ---
 
@@ -30,6 +30,9 @@
 |---|---|---|---|---|---|
 | MF-01 | `@api.model create` di-route ke `model_create_multi` di 19.0 (bukan `model_create_single` seperti 18.0) — `values` di `create()` modul ini SELALU list, tidak pernah dict mentah | 2 | `[GAP-MIGRASI]` | Sedang-Tinggi | ✅ RESOLVED 2026-08-26 — dampak dikonfirmasi empiris di G1 (2/13 test gagal), dev pilih terima observable-outcome baru + update 2 assertion test, create() TIDAK diubah |
 | MF-02 | `ir.actions.act_window.target` value `'inline'` DIHAPUS TOTAL di 19.0 — install GAGAL (`ValueError`) pada `res_config_settings_action` (dead code, tidak pernah dipakai) | 6 (G1) | `[GAP-MIGRASI]` | **Tinggi (install-blocking)** | ✅ RESOLVED 2026-08-26 — diubah ke `'current'`, zero observable impact (action tidak pernah dipanggil) |
+| MF-03 | `static/description/assets/icons/bullet-diamond.png` tidak pernah ter-commit di branch rilis 19.0 — 28 ikon bullet di halaman Store rusak | pasca-rilis | `[DIWARISI-SOURCE]` | Rendah | ✅ RESOLVED 2026-10-02 — aset ditambahkan, rilis 19.0.1.0.1 |
+| MF-04 | Temuan review pasca-rilis (kosmetik/kode mati): `ir.model.access.csv` kosong & tak terdaftar, README merujuk `LICENSE` yang dibuang di staging, `description` manifest menyesatkan | pasca-rilis | `[DIWARISI-SOURCE]` | Rendah | Dicatat, TIDAK diperbaiki (di luar lingkup rilis) |
+| MF-05 | Ringkasan hotfix rilis 19.0.1.0.1 (2026-10-02) | pasca-rilis | — | — | ✅ Terkirim: staging/19.0 87fb8a1→3478ad0 · 19.0 d1e5ab3→621bc58 |
 
 **Finding yang DIWARISI dari project sebelumnya (bukan finding baru, dicatat sebagai referensi — detail lengkap di `01b_BASELINE_SPEC.md`):** 13 bug/quirk asal backfill (`F-01`..`F-13`, terutama `F-13`/`BSL-015` — email Jitsi tidak pernah aktif) semuanya WAJIB dipertahankan bug-for-bug di 19.0, sudah dikonfirmasi dev di `01a_MIGRATION_INTAKE.md` §Ringkasan poin 5. Tidak dicatat ulang sebagai `MF-NNN` di sini kecuali muncul keputusan BARU yang berbeda dari keputusan 17.0→18.0.
 
@@ -64,6 +67,35 @@
 **Dampak:** Install-blocking murni (bukan cuma runtime warning) — **tanpa fix ini modul TIDAK BISA dimigrasikan ke 19.0 sama sekali.** Record `res_config_settings_action` sendiri dikonfirmasi dead code/orphaned (`[BSL-022]`, tidak pernah direferensikan menu/button/kode manapun di modul ini) — jadi nilai `target` yang dipilih tidak pernah teramati user manapun.
 **Rekomendasi/Resolusi:** Diubah `inline` → `current` (nilai default field ini di kedua versi) — pilihan paling netral untuk record yang tidak pernah benar-benar dibuka. **Tidak ada perubahan observable behavior** karena action ini tidak pernah dipanggil. Diterapkan langsung tanpa eskalasi (keputusan teknis dengan satu opsi jelas aman, konsisten prinsip "Eksekusi Berkelanjutan").
 **Keputusan pemilik modul:** ✅ Diterima — perubahan wajib demi kompatibilitas 19.0, di luar kendali bug-for-bug (nilai lama tidak ada penggantinya, dihapus total dari Odoo core).
+
+---
+
+### MF-03 — Aset `bullet-diamond.png` hilang di rilis 19.0
+**Ditemukan di:** review pasca-rilis (2026-10-02) · **Tag:** `[DIWARISI-SOURCE]`
+**Lokasi:** `appointment_jitsi/static/description/index.html` — 28 rujukan `./assets/icons/bullet-diamond.png`
+**Deskripsi:** File tidak ada di `origin/19.0` (maupun `origin/staging/19.0`), sehingga halaman deskripsi Odoo Store menampilkan ikon rusak. Rilis 20.0 sudah memiliki file ini; `index.html` di 19.0 merujuknya sejak commit "update index.html".
+**Resolusi:** PNG yang sama (blob `df95bbc`, 1012 byte) diambil dari `origin/20.0` dan ditambahkan; semua rujukan lokal `index.html` diverifikasi ada. Tanpa perubahan kode. Versi modul di-bump patch ke `19.0.1.0.1`. Kode Python/XML tidak berubah.
+**Keputusan pemilik modul:** ✅ Disetujui (lingkup A, chat 2026-10-02).
+
+---
+
+### MF-04 — Temuan review pasca-rilis, tidak diperbaiki
+**Ditemukan di:** review pasca-rilis (2026-10-02) · **Tag:** `[DIWARISI-SOURCE]`
+1. `security/ir.model.access.csv` hanya berisi header dan tidak terdaftar di manifest `data`. Modul tidak punya model baru, jadi tidak ada celah akses.
+2. `appointment_jitsi/README.md` menulis "licensed under LGPLv3 (./LICENSE)", padahal `LICENSE` sengaja dibuang di branch staging/rilis — tautan rusak di rilis.
+3. `description` manifest menyebut "Jitsi API" dan "Customizes the appointment confirmation email", padahal tidak ada pemanggilan API dan email tidak pernah aktif (F-13: `data/mail_template_data.xml` tidak terdaftar di manifest — diverifikasi MASIH begitu di rilis 19.0).
+**Rekomendasi:** perbaiki bersama keputusan produk F-13 (daftarkan atau hapus template email); sisanya kosmetik.
+**Keputusan pemilik modul:** *(kosong — belum diputuskan; lingkup rilis dibatasi aset saja)*
+
+---
+
+### MF-05 — Ringkasan hotfix rilis 19.0.1.0.1
+**Tanggal:** 2026-10-02 · **Alur:** hotfix dari `origin/staging/19.0` → `staging/19.0` → `19.0` (ff-only, tanpa force)
+**Perubahan:** tambah `bullet-diamond.png` + bump versi `19.0.1.0.1` (2 commit, 2 file).
+**Bukti:** semua gambar lokal yang dirujuk `index.html` ada di commit hotfix; `git diff origin/staging/19.0 origin/19.0` kosong; file terlarang 0; `banner.png` 0; manifest `images` = banner.gif + icon.png.
+**Hash:** staging/19.0 87fb8a1→3478ad0 · 19.0 d1e5ab3→621bc58
+**Belum teruji:** tampilan di apps.odoo.com (menunggu Store memuat ulang; belum diketahui apakah bump patch diperlukan). Tidak ada uji Docker karena tidak ada perubahan kode.
+**Catatan audit:** 20.0 tidak diubah; dokumen ini tidak di-push dari branch rilis.
 
 ---
 
